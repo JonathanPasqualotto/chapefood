@@ -6,10 +6,10 @@ interface Props extends TextProps {
     codigo?: number;
     title?: string;
 }
-export function CCabecalho({ codigo, title, ...rest } : Props) {
+export function CCabecalhoCadastro({ codigo, title, ...rest } : Props) {
     return (
         <Header>
-            <Title>{codigo ? 'Alterando' : 'Adicionando'} {title}</Title>
+            <Title>{codigo ? 'Alterar' : 'Adicionar'} {title}</Title>
         </Header>
     )
 }
