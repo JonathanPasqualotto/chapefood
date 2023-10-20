@@ -4,6 +4,7 @@ import {CColumn} from "../../../../components/CColumn";
 import {CRow} from "../../../../components/CRow";
 import {CButton} from "../../../../components/CButton";
 import { NavigationProp, ParamListBase, useNavigation } from "@react-navigation/native";
+import {CIconButton} from "../../../../components/CIconButton";
 
 export function SListaEmpresa() {
     const navigation : NavigationProp<ParamListBase> = useNavigation();
@@ -18,7 +19,8 @@ export function SListaEmpresa() {
             <CColumn>
                 <CRow>
                     <Text>Empresa 1</Text>
-                    <CButton onPress={handleConsultaEmpresa} title="Ver" />
+                    {/*<CButton onPress={handleConsultaEmpresa} title="Alter" />*/}
+                    <CIconButton onPress={handleConsultaEmpresa} iconName="edit" color="black" size={40} />
                 </CRow>
                 <CRow><Text>Empresa 2</Text></CRow>
                 <CRow><Text>Empresa 3</Text></CRow>
