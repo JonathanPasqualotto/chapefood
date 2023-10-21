@@ -30,7 +30,7 @@ export const Logo = styled.ImageBackground`
   flex: 1;
   justify-content: center;
   align-items: center;
-  margin-top: ${ios ? Height*0.05 : Height*0.5};
+  margin-top: ${ios ? Height*0.05 : Height*0.05};
   width: ${Width};
   height: ${Height*0.5};
   background-repeat: no-repeat;
