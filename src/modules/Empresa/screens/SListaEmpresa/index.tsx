@@ -20,7 +20,8 @@ export function SListaEmpresa() {
                 <CRow>
                     <Text>Empresa 1</Text>
                     {/*<CButton onPress={handleConsultaEmpresa} title="Alter" />*/}
-                    <CIconButton onPress={handleConsultaEmpresa} iconName="edit" color="black" size={40} />
+                    <CIconButton onPress={handleConsultaEmpresa} iconName="edit" color="black" size={45} />
+                    <CIconButton onPress={handleConsultaEmpresa} iconName="trash" color="black" size={45} />
                 </CRow>
                 <CRow><Text>Empresa 2</Text></CRow>
                 <CRow><Text>Empresa 3</Text></CRow>
