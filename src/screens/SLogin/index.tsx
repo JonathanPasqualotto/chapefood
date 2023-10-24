@@ -6,13 +6,16 @@ import * as Yup from 'yup'
 import {Alert} from "react-native";
 import {AxiosError} from "axios";
 import {CLoader} from "../../components/CLoader";
+import {useAuth} from "../../hooks/auth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function SLogin(){
     const navigation : NavigationProp<ParamListBase> = useNavigation();
     const [usuario, setUsuario] = useState('')
     const [senha, setSenha] = useState('')
     const [isLoading, setIsLoading] = useState(false)
-   // const [isKeyboardOpen, setIsKeyboardOpen] = useState(false)
+    const [isKeyboardOpen, setIsKeyboardOpen] = useState(false)
+    const { signIn } = useAuth()
 
     async function handleSignIn() {
         try {
@@ -25,12 +28,9 @@ export default function SLogin(){
                     .required()
             })
             await shema.validate({usuario, senha})
-            await navigation.navigate('Home')
-
-            // IMPLEMENTAR ROTA AUTENTICADO
-            // async function handleLogin() {
-            //     navigation.navigate('Home')
-            // }
+            await AsyncStorage.setItem('@chapefood:usuarioLogado', usuario)
+            await AsyncStorage.setItem('@chapefood:senhaLoagdo', senha)
+            await signIn({ usuario, senha})
         }
         catch (error) {
             setIsLoading(false)
