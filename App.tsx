@@ -2,13 +2,16 @@ import React from 'react';
 import { Routes } from './src/routes';
 import { Container } from "./styles";
 import {TouchableOpacityProps} from "react-native";
+import {AppProvaider} from "./src/hooks";
 
 export default function App() {
 //  const [text, onChangeText] = React.useState('');
 
   return (
+      <AppProvaider>
+          <Routes />
+      </AppProvaider>
 
-      <Routes />
 
       // <Container>
       //   <Text1>CHAPE FOOD</Text1>
