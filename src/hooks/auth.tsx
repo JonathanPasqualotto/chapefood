@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { database } from "../database";
-import { Usuario } from "../database/modules/Usuario";
+import api from "../utils/api";
+import {Alert} from "react-native";
 
 interface Props{
     children: ReactNode
@@ -21,45 +21,48 @@ interface IAuthContextData{
 const AuthContext = createContext({} as IAuthContextData)
 
 function AuthProvider({ children } : Props){
-    const  [user, setUser ] = useState({} as SingInCredentials)
+    const [user, setUser ] = useState({} as SingInCredentials)
+
 
     async function signIn({ usuario, senha } : SingInCredentials){
-        let usuarioLogado = await database.getRepository(Usuario).createQueryBuilder().where("LOWER(_usuario) = LOWER(:usuario) and _senha = :senha", { usuario, senha}).getOne();
+        await AsyncStorage.setItem('@chapeffod:usuario', usuario)
+        await AsyncStorage.setItem('@chapefood:senha', senha)
 
-        if (usuarioLogado){
-            let usuarioAntigo = await AsyncStorage.getItem('@chapefood:usuario')
-            let usuarioNovo = false
-            if (usuarioAntigo != usuario){
-                usuarioNovo = true
-                await AsyncStorage.setItem('@chapefood:usuario', String(usuarioNovo))
-            }
-            await AsyncStorage.setItem('@chapefood:usuario', usuario)
-            await AsyncStorage.setItem('@chapefood:senha', senha)
-            setUser({ usuario, senha })
-        }
-        else {
-            throw new Error('Usuário ou Senha incorretos')
-        }
+        await api.get('/usuarios')
+            .then(response=>{
+                let achou = false
+                for (var i in response.data){
+                    if (response.data[i].login === usuario && response.data[i].senha === senha) {
+                            usuario = response.data[i].login
+                            senha = response.data[i].senha
+                            setUser({ usuario, senha })
+                            achou = true
+                    }
+                }
+
+                if (achou === false) {
+                    Alert.alert('Erro de Autenticação', `Login ou Senha incorretos`, [{ text: 'OK'}]);
+                }
+
+            })
     }
 
     async function signOut(){
         await AsyncStorage.removeItem('@chapefood:usuario')
-        await AsyncStorage.removeItem('@chapefood:senha')
         setUser({} as SingInCredentials)
     }
 
     useEffect(() => {
         (async function loadUserData(){
             const usuario = await AsyncStorage.getItem('@chapefood:usuario')
-            const senha = await AsyncStorage.getItem('@chapefood:senha')
             if (!!usuario){
-                setUser({ usuario, senha: senha ?? "" })
+                setUser({ usuario, senha: "" })
             }
         })()
     }, []);
 
     return (
-        <AuthContext.Provider value={{ signIn, signOut, user}}>
+        <AuthContext.Provider value={{ signIn, signOut, user }}>
             {children}
         </AuthContext.Provider>
     )

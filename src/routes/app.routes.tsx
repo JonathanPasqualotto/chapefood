@@ -15,10 +15,6 @@ export function AppRouter() {
             }}
         >
             <Screen
-                name= 'Login'
-                component={SLogin}
-            />
-            <Screen
                 name='Home'
                 component={SHome}
             />

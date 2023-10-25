@@ -14,7 +14,7 @@ export default function SLogin(){
     const [usuario, setUsuario] = useState('')
     const [senha, setSenha] = useState('')
     const [isLoading, setIsLoading] = useState(false)
-    const [isKeyboardOpen, setIsKeyboardOpen] = useState(false)
+   // const [isKeyboardOpen, setIsKeyboardOpen] = useState(false)
     const { signIn } = useAuth()
 
     async function handleSignIn() {
@@ -30,7 +30,7 @@ export default function SLogin(){
             await shema.validate({usuario, senha})
             await AsyncStorage.setItem('@chapefood:usuarioLogado', usuario)
             await AsyncStorage.setItem('@chapefood:senhaLoagdo', senha)
-            await signIn({ usuario, senha})
+            await signIn({ usuario, senha })
         }
         catch (error) {
             setIsLoading(false)
@@ -45,11 +45,6 @@ export default function SLogin(){
             setIsLoading(false)
         }
     }
-
-    // async function handleLogin() {
-    //     navigation.navigate('Home')
-    // }
-
     return (
 
         <Logo source={require('../../../assets/inicio.png')}>
