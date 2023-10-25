@@ -15,6 +15,6 @@ export const Container = styled(TouchableOpacity)<Props>`
   border-radius: 5px;
   justify-content: center;
   align-items: center;
-  background-color: red;
-  //background-color: ${({ backgroundColor }) => backgroundColor ?? ''};
+  //background-color: red;
+  background-color: ${({ backgroundColor }) => backgroundColor ?? ''};
 `;
