@@ -12,26 +12,15 @@ import {useEffect, useState} from "react";
 interface empresaProps{
     nome?: string;
     codigo?: number;
-    route?: string;
 }
 
-export function SListaEmpresa({ nome, codigo, route }: empresaProps) {
+export function SListaEmpresa({ nome, codigo }: empresaProps) {
     const navigation : NavigationProp<ParamListBase> = useNavigation();
     const [ empresas, setEmpresas ] = useState([])
 
-    class MyText extends React.Component {
-        handleConsultaEmpresa = () => {
-            // Supondo que 'codigo' é uma propriedade de 'route.params'
-            const codigo = route.params.codigo;
-            // Navegue para a tela 'AlterarEmpresa' e passe 'codigo' como um parâmetro
-            navigation.navigate('NovaEmpresa', {codigo});
-        };
+    function handleConsultaEmpresa(){
+        navigation.navigate('NovaEmpresa', {codigo})
     }
-
-
-    // function handleConsultaEmpresa(){
-    //     navigation.navigate('NovaEmpresa', {codigo})
-    // }
 
     useEffect(() => {
         api.get('/empresas')
