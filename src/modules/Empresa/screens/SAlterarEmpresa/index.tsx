@@ -1,20 +1,23 @@
 import {CLoader} from "../../../../components/CLoader";
 import {useEffect, useState} from "react";
-import {Container, Divider, Footer, Input, SubTitulo} from "./styles";
-import {CButton} from "../../../../components/CButton";
-import {Alert, TouchableOpacityProps} from "react-native";
+import {Container, Footer, Input, SubTitulo} from "./styles";
+import {Alert} from "react-native";
 import {CCabecalhoCadastro} from "../../../../components/CCabecalhoCadastro";
-import { NavigationProp, ParamListBase, useNavigation } from "@react-navigation/native";
+import {NavigationProp, ParamListBase, useNavigation, useRoute} from "@react-navigation/native";
+import {CIconButton} from "../../../../components/CIconButton";
+//
+// interface Props extends TouchableOpacityProps{
+//     codigo?: number;
+//
+// }
 
-interface Props extends TouchableOpacityProps{
-    codigo?: number;
-
-}
-
-export function SNovaEmpresa({ codigo }: Props) {
+export function SAlterarEmpresa() {
     const [isloading, setIsloading] = useState(false);
     const [nome, setNome] = useState('')
     const navigation : NavigationProp<ParamListBase> = useNavigation();
+    const route = useRoute();
+    const id = route.params.id;
+    const name = route.params.nome
 
     useEffect(() => {
         try {
@@ -34,9 +37,9 @@ export function SNovaEmpresa({ codigo }: Props) {
         <Container>
             <CLoader isLoading={isloading} />
 
-            <CCabecalhoCadastro codigo={codigo} title="Empresa"/>
+            <CCabecalhoCadastro codigo={id} title="Empresa"/>
 
-            <SubTitulo>Nome</SubTitulo>
+            <SubTitulo>*{name}</SubTitulo>
             <Input
                 autoCapitalize='none'
                 placeholder='nome'
@@ -45,7 +48,7 @@ export function SNovaEmpresa({ codigo }: Props) {
             />
 
             <Footer>
-                <CButton onPress={handleSalvar} title="Salvar" />
+                <CIconButton onPress={handleSalvar} iconName="save" color="black" size={45} />
             </Footer>
         </Container>
     )

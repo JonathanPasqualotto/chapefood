@@ -7,4 +7,5 @@ export const Container = styled.SafeAreaView`
 export const Text = styled.Text`
   font-size: 30px;
   color: black;
+  font-weight: bold;
 `;

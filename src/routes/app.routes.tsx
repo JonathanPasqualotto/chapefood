@@ -2,7 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import {SHome} from '../screens/SHome'
 import SLogin from '../screens/SLogin'
 import {SLinhas} from "../screens/SLinhas";
-import {SNovaEmpresa} from "../modules/Empresa/screens/SAlterarEmpresa";
+import {SAlterarEmpresa} from "../modules/Empresa/screens/SAlterarEmpresa";
 import {SListaEmpresa} from "../modules/Empresa/screens/SListaEmpresa";
 
 const { Screen, Navigator } = createNativeStackNavigator()
@@ -27,8 +27,8 @@ export function AppRouter() {
                 component={SListaEmpresa}
             />
             <Screen
-                name='NovaEmpresa'
-                component={SNovaEmpresa}
+                name='AlterarEmpresa'
+                component={SAlterarEmpresa}
             />
         </Navigator>
     )

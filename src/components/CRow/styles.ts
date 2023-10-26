@@ -1,5 +1,9 @@
 import { RFValue } from "react-native-responsive-fontsize";
 import styled, { css } from "styled-components/native";
+import { Width, Height } from "../../utils/dimensions";
+import { Platform } from "react-native";
+
+const ios = Platform.OS === 'ios';
 
 interface Props{
     align?: 'left' | 'center' | 'right';
@@ -16,8 +20,8 @@ const alignment = {
 export const Container = styled.View<Props>`
     flex-direction: row;
     align-items: ${({ align }) => alignment[align ?? 'left']};
-    padding: ${RFValue(3)}px 0 ${RFValue(3)}px 0;
-    column-gap: ${RFValue(10)}px;
+    padding: ${ios ? Height*0.01 : Height*0.05}px;
+    column-gap: ${ios ? Width*0.05 : Width*0.05}px;
     ${({ justify }) => justify && css`
         justify-content: ${justify};
     `};
