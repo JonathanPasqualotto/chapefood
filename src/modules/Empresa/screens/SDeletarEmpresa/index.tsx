@@ -14,7 +14,7 @@ interface empresaProps{
     codigo?: number;
 }
 
-export function SListaEmpresa({ nome, codigo }: empresaProps) {
+export function SDeletarEmpresa({ nome, codigo }: empresaProps) {
     const navigation : NavigationProp<ParamListBase> = useNavigation();
     const [ empresas, setEmpresas ] = useState([])
 
@@ -36,19 +36,20 @@ export function SListaEmpresa({ nome, codigo }: empresaProps) {
             <CColumn>
                 {empresas?.map(emp => {
                     return (
-                        <CRow align="center" justify="center">
+                        <CRow>
                             <Text>{emp.nome}</Text>
+                            <Text>{emp.id}</Text>
                             <CIconButton
                                 iconName="edit"
-                                color="blue"
+                                color="black"
                                 size={45}
                                 onPress={() => {
-                                    navigation.navigate('AlterarEmpresa', {id: emp.id, nome:emp.nome})
+                                    navigation.navigate('AlterarEmpresa', {id: emp.id})
                                 }}
                             />
                             <CIconButton onPress={handleEditToEmpresa} iconName="trash" color="red" size={45} />
                         </CRow>
-                        )
+                    )
                 })}
             </CColumn>
 
