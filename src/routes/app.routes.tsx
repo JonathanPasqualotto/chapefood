@@ -2,7 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import {SHome} from '../screens/SHome'
 import SLogin from '../screens/SLogin'
 import {SLinhas} from "../screens/SLinhas";
-import {SNovaEmpresa} from "../modules/Empresa/screens/SNovaEmpresa";
+import {SNovaEmpresa} from "../modules/Empresa/screens/SAlterarEmpresa";
 import {SListaEmpresa} from "../modules/Empresa/screens/SListaEmpresa";
 
 const { Screen, Navigator } = createNativeStackNavigator()
