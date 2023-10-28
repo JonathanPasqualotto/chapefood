@@ -7,7 +7,7 @@ const ios = Platform.OS === 'ios';
 
 export const Container = styled.SafeAreaView`
   flex: 1;
-  background-color: #fff;
+  background-color: #1e1f22;
 `;
 
 export const Header = styled.View`
@@ -35,7 +35,7 @@ export const MenuGrid = styled.View`
   flex-direction: row;
   padding: ${ios ? 30 : 30}px ${ios ? 40 : 40}px;
   flex-wrap: wrap;
-  background-color: #fff;
+  background-color: #1e1f22;
 `;
 
 export const MenuItem = styled.TouchableOpacity`
