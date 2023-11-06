@@ -1,9 +1,14 @@
-import { RFValue } from "react-native-responsive-fontsize";
 import styled from "styled-components/native";
+import { Width, Height } from "../../utils/dimensions"
+import {Platform} from "react-native";
+
+const ios = Platform.OS === 'ios';
 
 interface Props{
     align?: 'left' | 'center' | 'right';
-    cols?: number;
+    marginRight?: number;
+    marginTop?: number;
+    marginLeft?: number;
 }
 
 const alignment = {
@@ -13,10 +18,13 @@ const alignment = {
 }
 
 export const Container = styled.View<Props>`
-    flex: ${({ cols }) => cols};
+    flex: 1;
     align-self: stretch;
     align-items: ${({ align }) => alignment[align ?? 'left']};
-    padding-right: ${RFValue(2)}px;
-    padding-left: ${RFValue(2)}px;
+    padding-right: ${ios ? 2 : 2}px;
+    padding-left: ${ios ? 2 : 2}px;
     justify-content: center;
+    margin-right: ${({ marginRight }) => marginRight ?? 20}px;
+    margin-top: ${({ marginTop }) => marginTop ?? 20}px;
+    margin-left: ${({ marginLeft }) => marginLeft ?? 20}px;
 `;

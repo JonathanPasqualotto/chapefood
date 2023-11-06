@@ -8,6 +8,9 @@ interface Props extends TouchableOpacityProps {
     backgroundColor?: string;
     iconName?: 'search' | 'edit' | 'plus' | 'trash' | 'save';
     size?: number;
+    marginRight?: number;
+    marginTop?: number;
+    marginLeft?: number;
 }
 
 export function CIconButton( { onPress, iconName, color, size = 24, ...rest }: Props) {

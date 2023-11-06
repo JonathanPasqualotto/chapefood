@@ -7,6 +7,9 @@ const ios = Platform.OS === 'ios';
 
 interface Props {
     backgroundColor?: string;
+    marginRight?: number;
+    marginTop?: number;
+    marginLeft?: number;
 }
 
 export const Container = styled(TouchableOpacity)<Props>`
@@ -15,6 +18,8 @@ export const Container = styled(TouchableOpacity)<Props>`
   border-radius: 5px;
   justify-content: center;
   align-items: center;
-  //background-color: red;
   background-color: ${({ backgroundColor }) => backgroundColor ?? ''};
+  margin-right: ${({ marginRight }) => marginRight ?? 20}px;
+  margin-top: ${({ marginTop }) => marginTop ?? 20}px;
+  margin-left: ${({ marginLeft }) => marginLeft ?? 20}px;
 `;

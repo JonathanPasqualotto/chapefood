@@ -1,20 +1,17 @@
 import React, {useState} from "react";
 import  { Input, Logo, Input1 } from './styles'
 import {CButton} from "../../components/CButton";
-import { NavigationProp, ParamListBase, useNavigation } from "@react-navigation/native";
 import * as Yup from 'yup'
-import {Alert} from "react-native";
+import {Alert, KeyboardAvoidingView} from "react-native";
 import {AxiosError} from "axios";
-import {CLoader} from "../../components/CLoader";
 import {useAuth} from "../../hooks/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {Platform} from "react-native";
 
 export default function SLogin(){
-    const navigation : NavigationProp<ParamListBase> = useNavigation();
     const [usuario, setUsuario] = useState('')
     const [senha, setSenha] = useState('')
     const [isLoading, setIsLoading] = useState(false)
-   // const [isKeyboardOpen, setIsKeyboardOpen] = useState(false)
     const { signIn } = useAuth()
 
     async function handleSignIn() {
@@ -48,21 +45,22 @@ export default function SLogin(){
     return (
 
         <Logo source={require('../../../assets/inicio.png')}>
-            <CLoader isLoading={isLoading} />
-            <Input
-                placeholder="Usuário"
-                autoCapitalize='none'
-                onChangeText={setUsuario}
-                value={usuario}
+            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}>
+                <Input
+                    placeholder="Usuário"
+                    autoCapitalize='none'
+                    onChangeText={setUsuario}
+                    value={usuario}
 
-            />
-            <Input1
-                placeholder="Senha"
-                secureTextEntry={true}
-                autoCapitalize='none'
-                onChangeText={setSenha}
-                value={senha}
-            />
+                />
+                <Input1
+                    placeholder="Senha"
+                    secureTextEntry={true}
+                    autoCapitalize='none'
+                    onChangeText={setSenha}
+                    value={senha}
+                />
+            </KeyboardAvoidingView>
             <CButton onPress={handleSignIn} title="Login"/>
         </Logo>
     )
