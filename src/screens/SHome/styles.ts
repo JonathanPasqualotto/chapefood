@@ -44,7 +44,7 @@ export const MenuItem = styled.TouchableOpacity`
   margin: ${ios ? 10 : 10}px;
   border-radius: ${ios ? 20 : 20}px;
   padding: ${ios ? 10 : 10}px ${ios ? 30 : 30}px;
-  background-color: #e0ffc4;
+  background-color: #98E4FF;
   flex-wrap: wrap;
   justify-content: space-around;
   align-items: center;

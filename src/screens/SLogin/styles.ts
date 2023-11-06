@@ -5,7 +5,6 @@ import {Platform} from "react-native";
 
 const ios = Platform.OS === 'ios';
 export const Input = styled.TextInput`
-  color: #d6de21;
   font-size: ${RFValue(22)}px;
   margin-top: ${ios ? Height*0.3 : Height*0.35};
   padding: ${ios ? 15 : 10}px ${ios ? 20 : 28}px;
@@ -16,7 +15,6 @@ export const Input = styled.TextInput`
 `;
 
 export const Input1 = styled.TextInput`
-  color: #d6de21;
   font-size: ${RFValue(22)}px;
   margin-top: ${ios ? 10 : 10}px;
   padding: ${ios ? 15 : 10}px ${ios ? 20 : 28}px;

@@ -5,10 +5,12 @@ interface Props {
     align?: 'left' | 'center' | 'right';
     justify?: 'center';
     children: any;
-    cols?: number;
+    marginRight?: number;
+    marginTop?: number;
+    marginLeft?: number;
 }
 
-export function CColumn({ children, cols, ...rest } : Props){
+export function CColumn({ children, ...rest } : Props){
     return (
         <Container {...rest}>
             {children}
