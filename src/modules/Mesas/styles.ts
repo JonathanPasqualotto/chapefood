@@ -1,9 +1,14 @@
 import styled from "styled-components/native";
-import {RFValue} from "react-native-responsive-fontsize";
+import { RFValue } from "react-native-responsive-fontsize";
 import { Width, Height } from "../../utils/dimensions"
-import {Platform} from "react-native";
+import { Platform } from "react-native";
 
 const ios = Platform.OS === 'ios';
+
+export const Container = styled.SafeAreaView`
+  flex: 1;
+  background-color: #1e1f22;
+`;
 
 export const LinhaContainer = styled.TouchableOpacity`
     margin-top:  ${ios ? Width*0.15 : Width*0.15};
