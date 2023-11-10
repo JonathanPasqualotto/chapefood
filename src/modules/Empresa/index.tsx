@@ -73,7 +73,7 @@ export function SEmpresa() {
             .catch(error => {
                 console.log(error)
             })
-    }, );
+    }, [empresas]);
 
     return (
         <Container>

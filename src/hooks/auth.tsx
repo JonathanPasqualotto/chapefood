@@ -2,6 +2,7 @@ import { createContext, ReactNode, useContext, useEffect, useState } from "react
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from "../utils/api";
 import {Alert} from "react-native";
+import axios from "axios";
 
 interface Props{
     children: ReactNode
@@ -28,24 +29,25 @@ function AuthProvider({ children } : Props){
         await AsyncStorage.setItem('@chapeffod:usuario', usuario)
         await AsyncStorage.setItem('@chapefood:senha', senha)
 
-        await api.get('/usuarios')
-            .then(response=>{
-                let achou = false
-                for (var i in response.data){
-                    if (response.data[i].login === usuario && response.data[i].senha === senha) {
-                            usuario = response.data[i].login
-                            senha = response.data[i].senha
-                            setUser({ usuario, senha })
-                            achou = true
-                    }
-                }
-
-                if (achou === false) {
-                    Alert.alert('Erro de Autenticação', `Login ou Senha incorretos`, [{ text: 'OK'}]);
-                }
-
+        try {
+            const request = await api.post('/auth/login', {
+                login: usuario,
+                senha
             })
+            const data = request.data
+            const statusCode = request.status
+            if (statusCode === 200){
+                setUser({ usuario, senha })
+            } else {
+                throw { message: data.message, statusCode }
+            }
+        } catch(error) {
+            if (axios.isAxiosError(error) && error.response?.status === 401){
+                return Alert.alert('Não atuorizado','Verifique os dados se estão corretos', [{ text: 'Ok' }])
+            }
+        }
     }
+
 
     async function signOut(){
         await AsyncStorage.removeItem('@chapefood:usuario')
