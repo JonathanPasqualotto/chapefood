@@ -9,6 +9,7 @@ interface Props{
     marginRight?: number;
     marginTop?: number;
     marginLeft?: number;
+    marginBottom?: number
 }
 
 const alignment = {
@@ -27,4 +28,5 @@ export const Container = styled.View<Props>`
     margin-right: ${({ marginRight }) => marginRight ?? 20}px;
     margin-top: ${({ marginTop }) => marginTop ?? 20}px;
     margin-left: ${({ marginLeft }) => marginLeft ?? 20}px;
+    margin-bottom: ${({ marginBottom }) => marginBottom ?? 20}px;
 `;

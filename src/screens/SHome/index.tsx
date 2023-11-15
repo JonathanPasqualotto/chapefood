@@ -9,8 +9,16 @@ export function SHome(){
         navigation.navigate('Linha')
     }
 
-    function handleEmpresa(){
-        navigation.navigate('ListaEmpresa')
+    function handleEmpresas(){
+        navigation.navigate('Empresas')
+    }
+
+    function handleUsuarios(){
+        navigation.navigate('Usuarios')
+    }
+
+    function handleMesas(){
+        navigation.navigate('Mesas')
     }
 
     return (
@@ -18,16 +26,16 @@ export function SHome(){
             <CCabecalhoHome title="CHAPEFOOD" />
             <Body>
                 <MenuGrid>
-                    <MenuItem onPress={handleEmpresa}>
+                    <MenuItem onPress={handleEmpresas}>
                         <TextButton>Empresa</TextButton>
                     </MenuItem>
-                    <MenuItem onPress={handleLinha}>
+                    <MenuItem onPress={handleUsuarios}>
                         <TextButton>Usuários</TextButton>
                     </MenuItem>
                     <MenuItem onPress={handleLinha}>
                         <TextButton>Relatórios</TextButton>
                     </MenuItem>
-                    <MenuItem onPress={handleLinha}>
+                    <MenuItem onPress={handleMesas}>
                         <TextButton>Mesas</TextButton>
                     </MenuItem>
                     <MenuItem onPress={handleLinha}>

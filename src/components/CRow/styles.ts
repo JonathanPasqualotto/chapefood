@@ -19,7 +19,7 @@ const alignment = {
 
 export const Container = styled.View<Props>`
     flex-direction: row;
-    align-items: ${({ align }) => alignment[align ?? 'left']};
+    align-items: ${({ align }) => align ?? 'left'};
     padding: ${ios ? Height*0.01 : Height*0.05}px;
     column-gap: ${ios ? Width*0.05 : Width*0.05}px;
     ${({ justify }) => justify && css`
