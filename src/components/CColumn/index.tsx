@@ -8,6 +8,7 @@ interface Props {
     marginRight?: number;
     marginTop?: number;
     marginLeft?: number;
+    marginBottom?: number
 }
 
 export function CColumn({ children, ...rest } : Props){

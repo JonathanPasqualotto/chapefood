@@ -9,6 +9,12 @@ import {useEffect, useState} from "react";
 import { Modal, Alert, FlatList } from "react-native";
 import {CButton} from "../../components/CButton";
 
+
+interface IEmpresa{
+    id: number
+    nome: string
+}
+
 export function SEmpresa() {
     const [ empresas, setEmpresas ] = useState([])
     const [ modalVisibleEdit, setModalVisibleEdit] = useState(false);
@@ -18,9 +24,9 @@ export function SEmpresa() {
     const [ modalVisibleNew, setModalVisibleNew ] = useState(false)
     const [ novaEmpresa, setNovaEmpresa ] = useState()
 
-    function handleDeleteEmpresa(id: number | null) {
+    function handleDeleteEmpresa({ id }: IEmpresa) {
         if (id !== null) {
-            Alert.alert('Deseja excluir o item selecionado?', '', [{text: 'Cancelar'}, {text: 'OK', onPress: () => {
+            Alert.alert('Deseja excluir o item selecionado?', '', [{text: 'Não'}, {text: 'Sim', onPress: () => {
                 api.delete('/empresas/' + id)
                 setEditEmpresaId(null);
                 setNomeEmpresa(null);
@@ -29,10 +35,10 @@ export function SEmpresa() {
         }
     }
 
-    function handleEditEmpresa(id: number | null){
+    function handleEditEmpresa({ id, nome }: IEmpresa){
         if (id !== null) {
             api.patch('/empresas/' +id, {
-                nome: editEmpresa,
+                nome
             })
                 .then(response => {
                     //console.log('OK')
@@ -48,10 +54,10 @@ export function SEmpresa() {
         setModalVisibleEdit(false)
     }
 
-    function handleNewEmpresa(nome: string | null){
+    function handleNewEmpresa({ nome }: IEmpresa){
         if (nome !== null){
             api.post('/empresas', {
-                nome: novaEmpresa
+                nome
             })
                 .then(response => {
                     //console.log('OK')

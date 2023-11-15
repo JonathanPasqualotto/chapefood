@@ -1,31 +1,14 @@
 import styled from "styled-components/native";
-import { RFValue } from "react-native-responsive-fontsize";
-import { Width, Height } from "../../utils/dimensions"
+import { Width, Height } from "../../utils/dimensions";
 import { Platform } from "react-native";
+import { RFValue } from "react-native-responsive-fontsize";
 
-const ios = Platform.OS === 'ios';
+const ios = Platform.OS === 'ios'
 
 export const Container = styled.SafeAreaView`
   flex: 1;
   background-color: #1e1f22;
 `;
-
-export const LinhaContainer = styled.TouchableOpacity`
-    margin-top:  ${ios ? Width*0.15 : Width*0.15};
-    background-color: #fff;
-    border-radius: ${ios ? 50 : 50}px;
-    align-items: center;
-    padding: ${ios ? 10 : 10}px;
-    width: ${ios ? Width*0.8 : Width*0.8};
-    height: ${ios ? Height*0.17 : Height*0.17};
-`;
-
-export const Body = styled.ScrollView.attrs({
-    contentContainerStyle: {
-        alignItems: 'center'
-    },
-    showsVerticalScrollIndicator: false
-})``;
 
 export const Text = styled.Text`
   font-size: ${RFValue(25)}px;
@@ -58,8 +41,10 @@ export const Input = styled.TextInput`
   width: ${ios ? Width*0.8 : Width*0.5 };
   background-color: white;
 `;
+
 export const Footer = styled.View`
   align-items: flex-end;
   justify-content: right;
   padding-right: 20px;
 `;
+
