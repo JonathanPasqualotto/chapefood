@@ -61,5 +61,10 @@ export const Input = styled.TextInput`
 export const Footer = styled.View`
   align-items: flex-end;
   justify-content: right;
-  padding-right: 20px;
+  padding-right: ${ios ? 20 : 20}px;
+`;
+
+export const Coluna = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
 `;

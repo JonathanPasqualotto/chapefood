@@ -1,14 +1,15 @@
 import React, {useEffect, useState} from "react";
-import {Body, Container, Footer, HeaderModal, Input, TextCad, Text} from "./styles";
+import {Body, Container, Footer, HeaderModal, Input, TextCad, Text, Coluna} from "./styles";
 import api from "../../utils/api";
-import { Table, TableWrapper, Row, Cell, Rows } from 'react-native-table-component';
-import {StyleSheet, View, Modal, Alert} from 'react-native';
-import {CButton} from "../../components/CButton";
+import { Row } from 'react-native-table-component';
+import {StyleSheet, Modal, Alert} from 'react-native';
 import {CIconButton} from "../../components/CIconButton";
 import {CCabecalhoHome} from "../../components/CCabecalhoHome";
 import {CColumn} from "../../components/CColumn";
-import {CRow} from "../../components/CRow";
 import {CTable} from "../../components/CTable";
+import { SelectList } from "react-native-dropdown-select-list/index";
+import {CSelectList} from "../../components/CSelectList";
+import {CTableRow} from "../../components/CTableRow";
 
 interface IMesa{
     id?: number
@@ -22,6 +23,8 @@ export function SMesas() {
     const [ dados, setDados ] = useState([])
     const [ modalVisibleNew, setModalVisibleNew ] = useState(false)
     const [ modalVisibleEdit, setModalVisibleEdit] = useState(false);
+    const [ selected, setSelected ] = useState("")
+    const [ selectEmpresa, setSelectEmpresa ] = useState([])
 
     // VARIAVEIS PARA CRIAÇÃO
     const [ novaCapacidade, setNovaCapacidade ] = useState(null)
@@ -33,17 +36,13 @@ export function SMesas() {
     const [ editCapacidade, setEditCapacidade] = useState(null)
     const [ editDescricao, setEditDescricao ] = useState(null)
     const [ editEmpresa, setEditEmpresa ] = useState(null)
+    const [selectedEdit, setSelectedEdit] = useState("");
+
 
     // VARIAVEIS ṔARA EXIBIR
     const [ dispCapacidade, setDispCapacidade ] = useState(null)
     const [ dispDescricao, setDispDescricao ] = useState(null)
     const [ dispEmpresa, setDispEmpresa ] = useState(null)
-
-    const styles = StyleSheet.create({
-        container: { flex: 1, padding: 20, paddingTop: 50 },
-        head: { backgroundColor: 'green', marginTop: 20, height: 40 },
-        text: { margin: 6, backgroundColor: 'white' }
-    });
 
     async function handleDeleteMesa({ id }: IMesa){
         if (id !== null) {
@@ -74,10 +73,12 @@ export function SMesas() {
         setNovaDescricao(null)
         setNovaCapacidade(null)
         setNovaEmpresa(null)
+        setSelected("")
     }
 
     async function handleEditMesa({ id, capacidade, descricao, empresa }: IMesa){
-        console.log(id)
+        console.log('id ',id)
+        console.log('empresa ',empresa)
         if (id !== null){
             await api.patch('/mesas/'+id, {
                 capacidade,
@@ -86,7 +87,7 @@ export function SMesas() {
             })
                 .then(response => {
                     //console.log('OK')
-                    Alert.alert('Cadastro realizado com sucesso', '', [{text: 'OK'}])
+                    Alert.alert('Ajustes realizados com sucesso', '', [{text: 'OK'}])
                 })
                 .catch(error => {
                     console.log(error)
@@ -100,14 +101,24 @@ export function SMesas() {
 
 
     useEffect(() => {
+        api.get('/empresas')
+            .then(resp => {
+                let empresa = resp.data.map((item) => {
+                    return {key: item.id, value: item.nome}
+                })
+                setSelectEmpresa(empresa)
+            })
+            .catch(erro => {
+                console.log(erro)
+            }),
         api.get('/mesas')
-            .then(response=>{
-                setDados(response.data)
-            })
-            .catch(error => {
-                console.log(error)
-            })
-    }, [dados]);
+                .then(response => {
+                    setDados(response.data)
+                })
+                .catch(error => {
+                    console.log(error)
+                })},
+        [dados]);
     return (
         <Container>
             <CCabecalhoHome title="Mesas" />
@@ -130,6 +141,7 @@ export function SMesas() {
                                 setEditDescricao(null)
                                 setEditCapacidade(null)
                                 setEditEmpresa(null)
+                                setSelected("")
                             }}>
                             <CColumn align='center'>
                                 <CColumn align='right' marginLeft={380} marginBottom={1}>
@@ -142,6 +154,7 @@ export function SMesas() {
                                         setEditDescricao(null)
                                         setEditCapacidade(null)
                                         setEditEmpresa(null)
+                                        setSelected("")
                                     }} />
                                 </CColumn>
                                 <HeaderModal>
@@ -161,22 +174,26 @@ export function SMesas() {
                                         value={editCapacidade.valueOf()}
                                     />
                                     <TextCad>*{dispEmpresa}</TextCad>
-                                    <Input
-                                        placeholder="Empresa"
-                                        autoCapitalize='none'
-                                        onChangeText={setEditEmpresa}
-                                        value={editEmpresa}
+                                    <CSelectList
+                                        setSelected={(val) => setSelected(val)}
+                                        data={selectEmpresa}
+                                        save="key"
+                                        onSelect={() => selected}
+                                        label="Empresa(s)"
+                                        searchPlaceholder="Pesquisar"
                                     />
 
                                     <CColumn />
 
-                                    <CIconButton marginLeft={200} iconName='save' color='black' size={50} onPress={() => handleEditMesa({
-                                        id: editMesaId,
-                                        descricao: editDescricao,
-                                        capacidade: editCapacidade,
-                                        empresa: editEmpresa
-                                    })} />
-                                    <CIconButton marginLeft={280} iconName="trash" color="red" size={50} onPress={() => handleDeleteMesa({ id: editMesaId})}/>
+                                    <Coluna>
+                                        <CIconButton iconName='save' color='black' size={50} onPress={() => handleEditMesa({
+                                            id: editMesaId,
+                                            descricao: editDescricao,
+                                            capacidade: editCapacidade,
+                                            empresa: selected
+                                        })} />
+                                        <CIconButton iconName="trash" color="red" size={50} onPress={() => handleDeleteMesa({ id: editMesaId})}/>
+                                    </Coluna>
                                 </HeaderModal>
                             </CColumn>
                         </Modal>
@@ -186,10 +203,10 @@ export function SMesas() {
                      {/*FIM MODAL EDIÇÃO*/}
 
 
-                    <Row data={["Descrição","Capacidade","Empresa","Editar"]} style={styles.head}/>
+                    <CTableRow backgroundColor='green' data={["Descrição","Capacidade","Empresa",""]} textStyle={{ color: 'white', fontSize: 18, fontWeight: 'bold', textAlign: 'center' }}/>
 
                     {Array.isArray(dados) && dados.map((item, index) => (
-                        <Row style={styles.text} key={index}
+                        <CTableRow backgroundColor='white' key={index} textStyle={{ color: 'black', fontSize: 18, fontWeight: 'normal', textAlign: 'center' }}
                              data={[item.descricao, item.capacidade, item.empresa.nome,
 
                                  <CIconButton iconName="edit" color="blue" size={30} onPress={() => {
@@ -199,7 +216,7 @@ export function SMesas() {
                                      setDispEmpresa(item.empresa.nome)
                                      setEditDescricao(item.descricao)
                                      setEditCapacidade(item.capacidade.toString())
-                                     setEditEmpresa(item.empresa.id)
+                                     setSelectedEdit(item.empresa.id.toString())
                                      setModalVisibleEdit(true)
                                  }} />
 
@@ -213,11 +230,10 @@ export function SMesas() {
             <Footer>
                 <CIconButton iconName='plus' color='green' size={60} onPress={() => setModalVisibleNew(true)} style={{ height: 80 }}/>
 
-
+                {/*MODAL NOVO*/}
                 {
                     modalVisibleNew == true
                         ?
-                        // MODAL NOVO
                         <Modal
                             animationType="none"
                             transparent={true}
@@ -227,6 +243,7 @@ export function SMesas() {
                                 setNovaDescricao(null)
                                 setNovaCapacidade(null)
                                 setNovaEmpresa(null)
+                                setSelected("")
                             }}>
 
                             <CColumn align='center'>
@@ -237,6 +254,7 @@ export function SMesas() {
                                         setNovaDescricao(null)
                                         setNovaCapacidade(null)
                                         setNovaEmpresa(null)
+                                        setSelected("")
                                     }} />
                                 </CColumn>
                                 <HeaderModal>
@@ -244,7 +262,6 @@ export function SMesas() {
                                     <TextCad>Descrição</TextCad>
                                     <Input
                                         placeholder="Descrição"
-                                        autoCapitalize='none'
                                         onChangeText={setNovaDescricao}
                                         value={novaDescricao}
                                     />
@@ -257,11 +274,13 @@ export function SMesas() {
                                         value={novaCapacidade}
                                     />
                                     <TextCad>Empresa</TextCad>
-                                    <Input
-                                        placeholder="Empresa"
-                                        autoCapitalize='none'
-                                        onChangeText={setNovaEmpresa}
-                                        value={novaEmpresa}
+                                    <CSelectList
+                                        setSelected={(val) => setSelected(val)}
+                                        data={selectEmpresa}
+                                        save="key"
+                                        onSelect={() => selected}
+                                        label="Empresa(s)"
+                                        searchPlaceholder="Selecione uma"
                                     />
 
                                     <CColumn />
@@ -269,15 +288,15 @@ export function SMesas() {
                                     <CIconButton marginLeft={280} iconName='save' color='black' size={40} onPress={() => handleNewMesa({
                                         descricao: novaDescricao,
                                         capacidade: novaCapacidade,
-                                        empresa: novaEmpresa
+                                        empresa: selected
                                     })} />
                                 </HeaderModal>
                             </CColumn>
                         </Modal>
-                        // FIM MODAL NOVO
                         :
                         <></>
                 }
+                {/*FIM MODAL NOVO*/}
             </Footer>
         </Container>
     )
