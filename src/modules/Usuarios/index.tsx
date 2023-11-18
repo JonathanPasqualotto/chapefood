@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from "react";
 import api from "../../utils/api";
-import {Container, Footer, HeaderModal, Input, Text, TextCad} from "./styles";
+import {Coluna, Container, Footer, HeaderModal, Input, Text, TextCad} from "./styles";
 import {CCabecalhoHome} from "../../components/CCabecalhoHome";
 import {CColumn} from "../../components/CColumn";
-import {Alert, FlatList, Modal} from "react-native";
-import {CRow} from "../../components/CRow";
+import {Alert, Modal} from "react-native";
 import {CIconButton} from "../../components/CIconButton";
-import {CButton} from "../../components/CButton";
+import {CTable} from "../../components/CTable";
+import {CTableRow} from "../../components/CTableRow";
 
 interface IUsuario{
     id: number
@@ -19,29 +19,29 @@ interface IUsuario{
 export function SUsuarios() {
     const [ dados, setDados ] = useState([])
     const [ modalVisibleNew, setModalVisibleNew ] = useState(false)
-    const [ modalVisibleEdit, setModalVisibleEdit] = useState(false);
+    const [ modalVisibleEdit, setModalVisibleEdit] = useState(false)
 
     // VARIAVEIS PARA EDIÇÃO
     const [ editUsuarioId, setEditUsuarioId] = useState(null)
-    const [ editUsuario, setEditUsuario] = useState()
-    const [ editCargo, setEditCargo ] = useState()
-    const [ editSenha, setEditSenha ] = useState()
-    const [ editLogin, setEditLogin ] = useState()
+    const [ editUsuario, setEditUsuario] = useState(null)
+    const [ editCargo, setEditCargo ] = useState(null)
+    const [ editSenha, setEditSenha ] = useState(null)
+    const [ editLogin, setEditLogin ] = useState(null)
 
     // VARIAVEIS ṔARA EXIBIR
-    const [ dispUsuario, setDispUsuario ] = useState()
-    const [ dispCargo, setDispCargo ] = useState()
-    const [ dispLogin, setDispLogin ] = useState()
+    const [ dispUsuario, setDispUsuario ] = useState(null)
+    const [ dispCargo, setDispCargo ] = useState(null)
+    const [ dispLogin, setDispLogin ] = useState(null)
 
     // VARIAVEIS PARA CRIAÇÃO
-    const [ novoUsuario, setNovoUsuario ] = useState()
-    const [ novoCargo, setNovoCargo ] = useState()
-    const [ novoLogin, setNovoLogin ] = useState()
-    const [ novaSenha, setNovaSenha ] = useState()
+    const [ novoUsuario, setNovoUsuario ] = useState(null)
+    const [ novoCargo, setNovoCargo ] = useState(null)
+    const [ novoLogin, setNovoLogin ] = useState(null)
+    const [ novaSenha, setNovaSenha ] = useState(null)
 
 
     async function handleNewUsuario({ nome, senha, login, cargo }: IUsuario){
-        if (nome !== null){
+        if (nome !== null && senha !== null && login !== null && cargo !== null){
             await api.post('/usuarios', {
                 nome,
                 cargo,
@@ -49,18 +49,20 @@ export function SUsuarios() {
                 senha,
             })
                 .then(response => {
-                    //console.log('OK')
                     Alert.alert('Cadastro realizado com sucesso', '', [{text: 'OK'}])
+                    setModalVisibleNew(false);
+                    setNovoUsuario(null)
+                    setNovoCargo(null)
+                    setNovoLogin(null)
+                    setNovaSenha(null)
                 })
                 .catch(error => {
                     console.log(error)
                 })
+        } else {
+            Alert.alert('Campos obrigatórios(*) não preenchidos ')
+            setModalVisibleNew(true)
         }
-        setModalVisibleNew(false);
-        setNovoUsuario(null)
-        setNovoCargo(null)
-        setNovoLogin(null)
-        setNovaSenha(null)
     }
 
     function handleDeleteUsuario({ id }: IUsuario){
@@ -69,18 +71,19 @@ export function SUsuarios() {
                     await api.delete('/usuarios/' + id)
                 }}])
         }
+        setModalVisibleEdit(false)
+        setEditUsuarioId(null)
     }
 
     async function handleEditUsuario({ id, nome, senha, login, cargo }: IUsuario) {
         if (id !== null) {
-            await api.patch('/usuarios/' +id, {
+            await api.patch('/usuarios/' +id.toString(), {
                 nome,
                 cargo,
                 login,
                 senha,
             })
                 .then(response => {
-                    //console.log('OK')
                     Alert.alert('Ajustes realizados com sucesso', '', [{text: 'OK'}])
                 })
                 .catch(error => {
@@ -109,220 +112,114 @@ export function SUsuarios() {
         <Container>
             <CCabecalhoHome title="Usuários" />
 
-            <CColumn marginLeft={20} marginTop={50}>
+                <CTable>
 
-                <FlatList
-                    data={dados}
-                    showsVerticalScrollIndicator={false}
-                    keyExtractor={item => item.id}
-                    contentContainerStyle={{ paddingBottom: 26 }}
-                    renderItem={({item }) => {
-                        return (
-                            <>
-                                {
-                                    item.id == 1
-                                        ?
-                                        <CRow key={item.id}>
-                                            <Text>{item.nome}</Text>
-                                            <Text>{item.cargo}</Text>
-                                            <Text>{item.login}
-                                                <CIconButton iconName="edit" color="blue" size={60} onPress={() => {
-                                                    setEditUsuarioId(item.id)
-                                                    setDispUsuario(item.nome)
-                                                    setDispCargo(item.cargo)
-                                                    setDispLogin(item.login)
-                                                    setEditUsuario(item.nome)
-                                                    setEditLogin(item.login)
-                                                    setEditCargo(item.cargo)
-                                                    //setEditSenha(null)  VER A SENHA
-                                                    setModalVisibleEdit(true)
-                                                }} />
+                    {modalVisibleEdit == true
+                            ?
+                            // MODAL DE EDIÇÃO
+                            <Modal
+                                animationType="none"
+                                transparent={true}
+                                visible={modalVisibleEdit}
+                                onRequestClose={() => {
+                                    setModalVisibleEdit(false);
+                                    setEditUsuarioId(null);
+                                    setDispUsuario(null)
+                                    setDispCargo(null)
+                                    setDispLogin(null)
+                                    setEditUsuario(null)
+                                    setEditLogin(null)
+                                    setEditCargo(null)
+                                    setEditSenha(null)
+                                }}>
+                                <CColumn align='center'>
+                                    <CColumn align='right' marginLeft={380} marginBottom={1}>
+                                        <CIconButton marginLeft={180} iconName='close' color='red' size={40} onPress={() => {
+                                            setModalVisibleEdit(false);
+                                            setEditUsuarioId(null);
+                                            setDispUsuario(null)
+                                            setDispCargo(null)
+                                            setDispLogin(null)
+                                            setEditUsuario(null)
+                                            setEditLogin(null)
+                                            setEditCargo(null)
+                                            setEditSenha(null)
+                                        }} />
+                                    </CColumn>
+                                    <HeaderModal>
+                                        <TextCad>{dispUsuario}</TextCad>
+                                        <Input
+                                            placeholder="Nome"
+                                            autoCapitalize='none'
+                                            onChangeText={setEditUsuario}
+                                            value={editUsuario}
+                                        />
+                                        <TextCad>{dispCargo}</TextCad>
+                                        <Input
+                                            placeholder="Cargo"
+                                            onChangeText={setEditCargo}
+                                            value={editCargo}
+                                        />
+                                        <TextCad>{dispLogin}</TextCad>
+                                        <Input
+                                            placeholder="Login"
+                                            autoCapitalize='none'
+                                            onChangeText={setEditLogin}
+                                            value={editLogin}
+                                        />
+                                        <TextCad>Senha</TextCad>
+                                        <Input
+                                            placeholder="Senha"
+                                            secureTextEntry={true}
+                                            autoCapitalize='none'
+                                            onChangeText={setEditSenha}
+                                            value={editSenha}
+                                        />
+                                        <CColumn />
+                                        <Coluna>
+                                            <CIconButton iconName='save' color='black' size={50} onPress={() => handleEditUsuario({
+                                                id: editUsuarioId,
+                                                nome: editUsuario,
+                                                senha: editSenha,
+                                                login: editLogin,
+                                                cargo: editCargo
+                                            })} />
+                                            <CIconButton iconName="trash" color="red" size={50} onPress={() => handleDeleteUsuario({ id: editUsuarioId})}/>
+                                        </Coluna>
+                                    </HeaderModal>
+                                </CColumn>
+                            </Modal>
+                            // FIM MODAL EDIÇÃO
+                            :
+                            <></>
+                    }
 
-                                                <CIconButton iconName="trash" color="red" size={60} onPress={() => handleDeleteUsuario({id: item.id})} />
+                    <CTableRow backgroundColor='green' data={["Nome","Cargo","Login","Senha",""]} textStyle={{ color: 'white', fontSize: 18, fontWeight: 'bold', textAlign: 'center' }} />
 
-                                            </Text>
+                        {Array.isArray(dados) && dados.map((item, index) => (
+                            <CTableRow backgroundColor='white' key={index} textStyle={{ color: 'black', fontSize: 18, fontWeight: 'normal', textAlign: 'center' }}
+                               data={[item.nome, item.cargo, item.login, "*",
 
-                                            {
-                                                modalVisibleEdit == true
-                                                    ?
-                                                    // MODAL DE EDIÇÃO
-                                                    <Modal
-                                                        animationType="none"
-                                                        transparent={true}
-                                                        visible={modalVisibleEdit}
-                                                        onRequestClose={() => {
-                                                            setModalVisibleEdit(false);
-                                                            setEditUsuarioId(null);
-                                                            setDispUsuario(null)
-                                                            setDispCargo(null)
-                                                            setDispLogin(null)
-                                                            setEditUsuario(null)
-                                                            setEditLogin(null)
-                                                            setEditCargo(null)
-                                                            setEditSenha(null)
-                                                        }}>
-                                                        <CColumn align='center'>
-                                                            <HeaderModal>
-                                                                <TextCad>*{dispUsuario}</TextCad>
-                                                                <Input
-                                                                    placeholder="Nome"
-                                                                    autoCapitalize='none'
-                                                                    onChangeText={setEditUsuario}
-                                                                    value={editUsuario}
-                                                                />
-                                                                <TextCad>*{dispCargo}</TextCad>
-                                                                <Input
-                                                                    placeholder="Cargo"
-                                                                    autoCapitalize='none'
-                                                                    onChangeText={setEditCargo}
-                                                                    value={editCargo}
-                                                                />
-                                                                <TextCad>*{dispLogin}</TextCad>
-                                                                <Input
-                                                                    placeholder="Login"
-                                                                    autoCapitalize='none'
-                                                                    onChangeText={setEditLogin}
-                                                                    value={editLogin}
-                                                                />
-                                                                <TextCad>Senha</TextCad>
-                                                                <Input
-                                                                    placeholder="Senha"
-                                                                    secureTextEntry={true}
-                                                                    autoCapitalize='none'
-                                                                    onChangeText={setEditSenha}
-                                                                    value={editSenha}
-                                                                />
-                                                                <CButton title="Cancelar" onPress={() => {
-                                                                    setModalVisibleEdit(false);
-                                                                    setEditUsuarioId(null);
-                                                                    setDispUsuario(null)
-                                                                    setDispCargo(null)
-                                                                    setDispLogin(null)
-                                                                    setEditUsuario(null)
-                                                                    setEditLogin(null)
-                                                                    setEditCargo(null)
-                                                                    setEditSenha(null)
-                                                                }} />
-                                                                <CButton title="Salvar" onPress={() => handleEditUsuario({
-                                                                    id: editUsuarioId,
-                                                                    nome: editUsuario,
-                                                                    senha: editSenha,
-                                                                    login: editLogin,
-                                                                    cargo: editCargo})} />
-                                                            </HeaderModal>
-                                                        </CColumn>
-                                                    </Modal>
-                                                    // FIM MODAL EDIÇÃO
-                                                    :
-                                                    <></>
-                                            }
+                                   <CIconButton style={{ alignSelf: 'center' }} marginBottom={15} iconName="edit" color="blue" size={30} onPress={() => {
+                                       setEditUsuarioId(item.id)
+                                       setDispUsuario(item.nome)
+                                       setDispCargo(item.cargo)
+                                       setDispLogin(item.login)
+                                       setEditUsuario(item.nome)
+                                       setEditLogin(item.login)
+                                       setEditCargo(item.cargo)
+                                      // setEditSenha(null)
+                                       setModalVisibleEdit(true)
+                                   }} />
 
-                                        </CRow>
-                                        :
-                                        <CRow key={item.id}>
-                                            <Text>{item.nome}</Text>
-                                            <Text>{item.cargo}</Text>
-                                            <Text>{item.login}
-                                                <CIconButton iconName="edit" color="blue" size={60} onPress={() => {
-                                                    setEditUsuarioId(item.id)
-                                                    setDispUsuario(item.nome)
-                                                    setDispCargo(item.cargo)
-                                                    setDispLogin(item.login)
-                                                    setEditUsuario(item.nome)
-                                                    setEditLogin(item.login)
-                                                    setEditCargo(item.cargo)
-                                                    //setEditSenha(null)  VER A SENHA
-                                                    setModalVisibleEdit(true)
-                                                }} />
+                               ]}
+                            />
+                        ))}
 
-                                                <CIconButton iconName="trash" color="red" size={60} onPress={() => handleDeleteUsuario({id: item.id})} />
+                </CTable>
 
-                                            </Text>
+            <CColumn />
 
-                                            {
-                                                modalVisibleEdit == true
-                                                    ?
-                                                    // MODAL DE EDIÇÃO
-                                                    <Modal
-                                                        animationType="none"
-                                                        transparent={true}
-                                                        visible={modalVisibleEdit}
-                                                        onRequestClose={() => {
-                                                            setModalVisibleEdit(false);
-                                                            setEditUsuarioId(null);
-                                                            setDispUsuario(null)
-                                                            setDispCargo(null)
-                                                            setDispLogin(null)
-                                                            setEditUsuario(null)
-                                                            setEditLogin(null)
-                                                            setEditCargo(null)
-                                                            setEditSenha(null)
-                                                        }}>
-                                                        <CColumn align='center'>
-                                                            <HeaderModal>
-                                                                <Text>*{dispUsuario}</Text>
-                                                                <TextCad>Nome</TextCad>
-                                                                <Input
-                                                                    placeholder="Nome"
-                                                                    autoCapitalize='none'
-                                                                    onChangeText={setEditUsuario}
-                                                                    value={editUsuario}
-                                                                />
-                                                                <TextCad>*{dispCargo}</TextCad>
-                                                                <Input
-                                                                    placeholder="Cargo"
-                                                                    autoCapitalize='none'
-                                                                    onChangeText={setEditCargo}
-                                                                    value={editCargo}
-                                                                />
-                                                                <TextCad>*{dispLogin}</TextCad>
-                                                                <Input
-                                                                    placeholder="Login"
-                                                                    autoCapitalize='none'
-                                                                    onChangeText={setEditLogin}
-                                                                    value={editLogin}
-                                                                />
-                                                                <TextCad>Senha</TextCad>
-                                                                <Input
-                                                                    placeholder="Senha"
-                                                                    secureTextEntry={true}
-                                                                    autoCapitalize='none'
-                                                                    onChangeText={setEditSenha}
-                                                                    value={editSenha}
-                                                                />
-                                                                <CButton title="Cancelar" onPress={() => {
-                                                                    setModalVisibleEdit(false);
-                                                                    setEditUsuarioId(null);
-                                                                    setDispUsuario(null)
-                                                                    setDispCargo(null)
-                                                                    setDispLogin(null)
-                                                                    setEditUsuario(null)
-                                                                    setEditLogin(null)
-                                                                    setEditCargo(null)
-                                                                    setEditSenha(null)
-                                                                }} />
-                                                                <CButton title="Salvar" onPress={() => handleEditUsuario({
-                                                                    id: editUsuarioId,
-                                                                    nome: editUsuario,
-                                                                    senha: editSenha,
-                                                                    login: editLogin,
-                                                                    cargo: editCargo})} />
-                                                            </HeaderModal>
-                                                        </CColumn>
-                                                    </Modal>
-                                                    // FIM MODAL EDIÇÃO
-                                                    :
-                                                    <></>
-                                            }
-
-                                        </CRow>
-                                }
-                            </>
-                        )
-                    }}
-                />
-
-            </CColumn>
             <Footer>
                 <CIconButton iconName='plus' color='green' size={60} onPress={() => setModalVisibleNew(true)} style={{ height: 80 }}/>
 
@@ -343,30 +240,37 @@ export function SUsuarios() {
                                 setNovaSenha(null)
                             }}>
                             <CColumn align='center'>
+                                <CColumn align='right' marginLeft={380} marginBottom={1}>
+                                    <CIconButton marginLeft={180} iconName='close' color='red' size={40} onPress={() => {
+                                        setModalVisibleNew(false)
+                                        setNovoUsuario(null)
+                                        setNovoCargo(null)
+                                        setNovoLogin(null)
+                                        setNovaSenha(null)
+                                    }} />
+                                </CColumn>
                                 <HeaderModal>
-                                    <Text>Cadastrar novo Usuario</Text>
-                                    <TextCad>Nome</TextCad>
+                                    <Text>Cadastrar Usuario</Text>
+                                    <TextCad>*Nome</TextCad>
                                     <Input
                                         placeholder="Nome"
-                                        autoCapitalize='none'
                                         onChangeText={setNovoUsuario}
                                         value={novoUsuario}
                                     />
-                                    <TextCad>Cargo</TextCad>
+                                    <TextCad>*Cargo</TextCad>
                                     <Input
                                         placeholder="Cargo"
-                                        autoCapitalize='none'
                                         onChangeText={setNovoCargo}
                                         value={novoCargo}
                                     />
-                                    <TextCad>Login</TextCad>
+                                    <TextCad>*Login</TextCad>
                                     <Input
                                         placeholder="Login"
                                         autoCapitalize='none'
                                         onChangeText={setNovoLogin}
                                         value={novoLogin}
                                     />
-                                    <TextCad>Senha</TextCad>
+                                    <TextCad>*Senha</TextCad>
                                     <Input
                                         placeholder="Senha"
                                         secureTextEntry={true}
@@ -374,14 +278,10 @@ export function SUsuarios() {
                                         onChangeText={setNovaSenha}
                                         value={novaSenha}
                                     />
-                                    <CButton title="Cancelar" onPress={() => {
-                                        setModalVisibleNew(false)
-                                        setNovoUsuario(null)
-                                        setNovoCargo(null)
-                                        setNovoLogin(null)
-                                        setNovaSenha(null)
-                                    }} />
-                                    <CButton title="Salvar" onPress={() => handleNewUsuario({
+
+                                    <CColumn />
+
+                                    <CIconButton marginLeft={280} iconName='save' color='black' size={40} onPress={() => handleNewUsuario({
                                         nome: novoUsuario,
                                         senha: novaSenha,
                                         login: novoLogin,

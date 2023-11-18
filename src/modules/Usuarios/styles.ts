@@ -48,3 +48,7 @@ export const Footer = styled.View`
   padding-right: 20px;
 `;
 
+export const Coluna = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+`;

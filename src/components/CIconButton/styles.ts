@@ -12,6 +12,7 @@ interface Props {
     marginLeft?: number;
     alignItems?: string
     justifyContent?: string
+    marginBottom?: number
 }
 
 export const Container = styled(TouchableOpacity)<Props>`
@@ -22,6 +23,7 @@ export const Container = styled(TouchableOpacity)<Props>`
   margin-right: ${({ marginRight }) => marginRight ?? 20}px;
   margin-top: ${({ marginTop }) => marginTop ?? 20}px;
   margin-left: ${({ marginLeft }) => marginLeft ?? 20}px;
+  margin-bottom: ${({ marginBottom }) => marginBottom ?? 0}px;
   align-items: ${({ alignItems }) => alignItems ?? 'center'};
   justify-content: ${({ justifyContent }) => justifyContent ?? 'center'};
 `;
