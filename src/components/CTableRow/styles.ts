@@ -16,6 +16,9 @@ interface Props{
 export const Container = styled(Row)<Props>`
   background-color: ${({ backgroundColor }) => backgroundColor ?? 'white'};
   margin-top: ${({ marginTop }) => marginTop ?? 20}px;
+  margin-left: ${({ marginLeft }) => marginLeft ?? 0}px;
+  margin-bottom: ${({ marginBottom }) => marginBottom ?? 0}px;
+  margin-right: ${({ marginRight }) => marginRight ?? 0}px;
   height: ${ios ? Height*0.06 : Height*0.08}px;
   padding: 10px;
 `;

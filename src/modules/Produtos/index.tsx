@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Body, Container, Footer, HeaderModal, Input, TextCad, Text, Coluna} from "./styles";
+import {Body, Container, Footer, HeaderModal, Input, TextCad, Text, Coluna, ColunaCheck} from "./styles";
 import api from "../../utils/api";
 import {Modal, Alert} from 'react-native';
 import {CIconButton} from "../../components/CIconButton";
@@ -8,16 +8,19 @@ import {CColumn} from "../../components/CColumn";
 import {CTable} from "../../components/CTable";
 import {CSelectList} from "../../components/CSelectList";
 import {CTableRow} from "../../components/CTableRow";
+import {Checkbox} from "expo-checkbox";
+import {CMultSelectList} from "../../components/CMultSelectList";
 
-interface IMesa{
+interface IProdutos{
     id?: number
-    capacidade?: number
+    manufaturado?: boolean
     descricao?: string
-    empresa?: number
+    valorunitario?: number
+    empresa?: any[]
 }
 
 
-export function SMesas() {
+export function SProdutos() {
     const [ dados, setDados ] = useState([])
     const [ modalVisibleNew, setModalVisibleNew ] = useState(false)
     const [ modalVisibleEdit, setModalVisibleEdit] = useState(false);
@@ -25,42 +28,48 @@ export function SMesas() {
     const [ selectEmpresa, setSelectEmpresa ] = useState([])
 
     // VARIAVEIS PARA CRIAÇÃO
-    const [ novaCapacidade, setNovaCapacidade ] = useState(null)
+    const [ novoManufaturado, setNovoManufaturado ] = useState(false)
     const [ novaDescricao, setNovaDescricao ] = useState(null)
+    const [ novoValorUnitario, setNovoValorUnitario ] = useState(null)
+
 
     // VARIAVEIS PARA EDIÇÃO
-    const [ editMesaId, setEditMesaId] = useState(null)
-    const [ editCapacidade, setEditCapacidade] = useState(null)
+    const [ editProdutoId, setEditProdutoId] = useState(null)
+    const [ editManufaturado, setEditManufaturado] = useState(null)
     const [ editDescricao, setEditDescricao ] = useState(null)
+    const [ editValorUnitario, setEditValorUnitario ] = useState(null)
 
 
     // VARIAVEIS ṔARA EXIBIR
-    const [ dispCapacidade, setDispCapacidade ] = useState(null)
+    const [ dispValorUnitario, setDispValorUnitario ] = useState(null)
     const [ dispDescricao, setDispDescricao ] = useState(null)
-    const [ dispEmpresa, setDispEmpresa ] = useState(null)
 
-    async function handleDeleteMesa({ id }: IMesa){
+    async function handleDeleteProduto({ id }: IProdutos){
         if (id !== null) {
             Alert.alert('Deseja excluir o item selecionado?', '', [{text: 'Não'}, {text: 'Sim', onPress: async () => {
-                    await api.delete('/mesas/' + id)
+                    await api.delete('/produtos/' + id)
+                    await api.delete('produtos/empresa/'+40+'/produto/' + id)
+                    await api.delete('produtos/empresa/'+28+'/produto/' + id)
                 }}])
         }
         setModalVisibleEdit(false)
-        setEditMesaId(null)
+        setEditProdutoId(null)
     }
 
-    async function handleNewMesa({ capacidade, descricao, empresa }: IMesa){
-        if (descricao !== null && capacidade !== null && empresa !== null) {
-            await api.post('/mesas', {
-                capacidade,
+    async function handleNewProduto({ manufaturado, descricao, valorunitario, empresa }: IProdutos){
+        if (manufaturado !== null && descricao !== null && valorunitario !== null && (Array.isArray(empresa) && empresa.length !== 0)){
+            await api.post('/produtos', {
+                manufaturado,
                 descricao,
+                valorunitario,
                 empresa
             })
                 .then(response => {
                     Alert.alert('Cadastro realizado com sucesso', '', [{text: 'OK'}])
                     setModalVisibleNew(false);
                     setNovaDescricao(null)
-                    setNovaCapacidade(null)
+                    setNovoManufaturado(false)
+                    setNovoValorUnitario(null)
                     setSelected("")
                 })
                 .catch(error => {
@@ -72,15 +81,15 @@ export function SMesas() {
         }
     }
 
-    async function handleEditMesa({ id, capacidade, descricao, empresa }: IMesa){
+    async function handleEditProduto({ id, manufaturado, descricao, valorunitario, empresa}: IProdutos){
         if (id !== null){
-            await api.patch('/mesas/'+id, {
-                capacidade,
+            await api.patch('/produtos/'+id, {
+                manufaturado,
                 descricao,
+                valorunitario,
                 empresa
             })
                 .then(response => {
-                    //console.log('OK')
                     Alert.alert('Ajustes realizados com sucesso', '', [{text: 'OK'}])
                 })
                 .catch(error => {
@@ -89,33 +98,35 @@ export function SMesas() {
         }
         setModalVisibleEdit(false);
         setEditDescricao(null)
-        setEditCapacidade(null)
-        setEditMesaId(null)
+        setEditProdutoId(null)
+        setEditManufaturado(false)
+        setEditValorUnitario(null)
+        setSelected("")
     }
 
 
     useEffect(() => {
-        api.get('/empresas')
-            .then(resp => {
-                let empresa = resp.data.map((item) => {
-                    return {key: item.id, value: item.nome}
+            api.get('/empresas')
+                .then(resp => {
+                    let empresa = resp.data.map((item) => {
+                        return {key: item.id, value: item.nome}
+                    })
+                     setSelectEmpresa(empresa)
                 })
-                setSelectEmpresa(empresa)
-            })
-            .catch(erro => {
-                console.log(erro)
-            }),
-        api.get('/mesas')
-                .then(response => {
-                    setDados(response.data)
-                })
-                .catch(error => {
-                    console.log(error)
-                })},
+                .catch(erro => {
+                    console.log(erro)
+                }),
+                api.get('/produtos')
+                    .then(response => {
+                        setDados(response.data)
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })},
         [dados]);
     return (
         <Container>
-            <CCabecalhoHome title="Mesas" />
+            <CCabecalhoHome title="Produtos" />
             <Body>
                 <CTable>
 
@@ -128,24 +139,24 @@ export function SMesas() {
                             visible={modalVisibleEdit}
                             onRequestClose={() => {
                                 setModalVisibleEdit(false);
-                                setEditMesaId(null)
                                 setDispDescricao(null)
-                                setDispCapacidade(null)
-                                setDispEmpresa(null)
+                                setDispValorUnitario(null)
+                                setEditProdutoId(null)
                                 setEditDescricao(null)
-                                setEditCapacidade(null)
+                                setEditManufaturado(false)
+                                setEditValorUnitario(null)
                                 setSelected("")
                             }}>
                             <CColumn align='center'>
                                 <CColumn align='right' marginLeft={380} marginBottom={1}>
                                     <CIconButton marginLeft={180} iconName='close' color='red' size={40} onPress={() => {
                                         setModalVisibleEdit(false);
-                                        setEditMesaId(null)
                                         setDispDescricao(null)
-                                        setDispCapacidade(null)
-                                        setDispEmpresa(null)
+                                        setDispValorUnitario(null)
+                                        setEditProdutoId(null)
                                         setEditDescricao(null)
-                                        setEditCapacidade(null)
+                                        setEditManufaturado(false)
+                                        setEditValorUnitario(null)
                                         setSelected("")
                                     }} />
                                 </CColumn>
@@ -157,16 +168,26 @@ export function SMesas() {
                                         onChangeText={setEditDescricao}
                                         value={editDescricao}
                                     />
-                                    <TextCad>{dispCapacidade}</TextCad>
+                                    <TextCad>{dispValorUnitario}</TextCad>
                                     <Input
-                                        placeholder="Capacidade"
+                                        placeholder="Valor Unitário"
                                         autoCapitalize='none'
                                         keyboardType="numeric"
-                                        onChangeText={setEditCapacidade}
-                                        value={editCapacidade.valueOf()}
+                                        onChangeText={setEditValorUnitario}
+                                        value={editValorUnitario.valueOf()}
                                     />
-                                    <TextCad>{dispEmpresa}</TextCad>
-                                    <CSelectList
+
+                                    <ColunaCheck>
+                                        <Checkbox
+                                            onValueChange={setEditManufaturado}
+                                            value={editManufaturado}
+                                            color={'#fff'}
+                                        />
+                                        <TextCad>Manufaturado</TextCad>
+                                    </ColunaCheck>
+
+                                    <TextCad>Empresa</TextCad>
+                                    <CMultSelectList
                                         setSelected={(val) => setSelected(val)}
                                         data={selectEmpresa}
                                         save="key"
@@ -178,13 +199,14 @@ export function SMesas() {
                                     <CColumn />
 
                                     <Coluna>
-                                        <CIconButton iconName='save' color='black' size={50} onPress={() => handleEditMesa({
-                                            id: editMesaId,
+                                        <CIconButton iconName='save' color='black' size={50} onPress={() => handleEditProduto({
+                                            id: editProdutoId,
+                                            manufaturado: editManufaturado,
                                             descricao: editDescricao,
-                                            capacidade: editCapacidade,
-                                            empresa: selected
+                                            valorunitario: editValorUnitario ? editValorUnitario.replace(/,/g, '.') : null,
+                                            empresa: selected.valueOf()
                                         })} />
-                                        <CIconButton iconName="trash" color="red" size={50} onPress={() => handleDeleteMesa({ id: editMesaId})}/>
+                                        <CIconButton iconName="trash" color="red" size={50} onPress={() => handleDeleteProduto({ id: editProdutoId})}/>
                                     </Coluna>
                                 </HeaderModal>
                             </CColumn>
@@ -192,26 +214,32 @@ export function SMesas() {
                         :
                         <></>
                     }
-                     {/*FIM MODAL EDIÇÃO*/}
+                    {/*FIM MODAL EDIÇÃO*/}
 
 
-                    <CTableRow backgroundColor='green' data={["Descrição","Capacidade","Empresa",""]} textStyle={{ color: 'white', fontSize: 18, fontWeight: 'bold', textAlign: 'center' }}/>
+                    <CTableRow backgroundColor='green' data={["Descrição","Vlr Uni","Manuf",""]} textStyle={[{ color: 'white', fontSize: 18, fontWeight: 'bold', textAlign: 'center' }]}/>
 
                     {Array.isArray(dados) && dados.map((item, index) => (
-                        <CTableRow backgroundColor='white' key={index} textStyle={{ color: 'black', fontSize: 18, fontWeight: 'normal', textAlign: 'center' }}
-                             data={[item.descricao, item.capacidade, item.empresa.nome,
+                        <CTableRow backgroundColor='white' key={index} textStyle={[{color: 'black', fontSize: 18, fontWeight: 'normal', textAlign: 'center'}]}
+                                   data={[item.descricao, item.valorunitario,
 
-                                 <CIconButton style={{ alignSelf: 'center' }} marginBottom={15} iconName="edit" color="blue" size={30} onPress={() => {
-                                     setEditMesaId(item.id)
-                                     setDispDescricao(item.descricao)
-                                     setDispCapacidade(item.capacidade)
-                                     setDispEmpresa(item.empresa.nome)
-                                     setEditDescricao(item.descricao)
-                                     setEditCapacidade(item.capacidade.toString())
-                                     setModalVisibleEdit(true)
-                                 }} />
+                                       <Checkbox
+                                           disabled
+                                           value={item.manufaturado}
+                                           style={{ alignSelf: 'center' }}
+                                       />,
 
-                             ]}
+                                       <CIconButton style={{ alignSelf: 'center' }} marginBottom={15} iconName="edit" color="blue" size={30} onPress={() => {
+                                           setModalVisibleEdit(true)
+                                           setDispDescricao(item.descricao)
+                                           setDispValorUnitario(item.valorunitario)
+                                           setEditProdutoId(item.id)
+                                           setEditManufaturado(item.manufaturado)
+                                           setEditValorUnitario(item.valorunitario)
+                                           setEditDescricao(item.descricao)
+                                       }} />
+
+                                   ]}
                         />
                     ))}
                 </CTable>
@@ -232,7 +260,8 @@ export function SMesas() {
                             onRequestClose={() => {
                                 setModalVisibleNew(false)
                                 setNovaDescricao(null)
-                                setNovaCapacidade(null)
+                                setNovoManufaturado(false)
+                                setNovoValorUnitario(null)
                                 setSelected("")
                             }}>
 
@@ -242,30 +271,42 @@ export function SMesas() {
                                     <CIconButton iconName='close' color='red' size={40} onPress={() => {
                                         setModalVisibleNew(false)
                                         setNovaDescricao(null)
-                                        setNovaCapacidade(null)
+                                        setNovoManufaturado(false)
+                                        setNovoValorUnitario(null)
                                         setSelected("")
                                     }} />
                                 </CColumn>
                                 <HeaderModal>
-                                    <Text>Cadastrar Mesa</Text>
+                                    <Text>Cadastrar Produto</Text>
                                     <TextCad>*Descrição</TextCad>
                                     <Input
                                         placeholder="Descrição"
                                         onChangeText={setNovaDescricao}
                                         value={novaDescricao}
                                     />
-                                    <TextCad>*Capacidade</TextCad>
+                                    <TextCad>*Valor Unitário</TextCad>
                                     <Input
-                                        placeholder="Capacidade"
+                                        placeholder="Valor Unitário"
                                         autoCapitalize='none'
                                         keyboardType="numeric"
-                                        onChangeText={setNovaCapacidade}
-                                        value={novaCapacidade}
+                                        onChangeText={setNovoValorUnitario}
+                                        value={novoValorUnitario}
                                     />
+
+                                    <ColunaCheck>
+                                        <Checkbox
+                                            onValueChange={setNovoManufaturado}
+                                            value={novoManufaturado}
+                                            color={'#FFF'}
+                                        />
+                                        <TextCad>*Manufaturado</TextCad>
+                                    </ColunaCheck>
+
                                     <TextCad>*Empresa</TextCad>
-                                    <CSelectList
+                                    <CMultSelectList
                                         setSelected={(val) => setSelected(val)}
                                         data={selectEmpresa}
+                                        placeholder='*Select option'
                                         save="key"
                                         onSelect={() => selected}
                                         label="Empresa(s)"
@@ -274,10 +315,11 @@ export function SMesas() {
 
                                     <CColumn />
 
-                                    <CIconButton marginLeft={280} iconName='save' color='black' size={40} onPress={() => handleNewMesa({
+                                    <CIconButton marginLeft={280} iconName='save' color='black' size={40} onPress={() => handleNewProduto({
+                                        manufaturado: novoManufaturado,
                                         descricao: novaDescricao,
-                                        capacidade: novaCapacidade,
-                                        empresa: selected
+                                        valorunitario: novoValorUnitario ? novoValorUnitario.replace(/,/g, '.') : null,
+                                        empresa: selected.valueOf()
                                     })} />
                                 </HeaderModal>
                             </CColumn>

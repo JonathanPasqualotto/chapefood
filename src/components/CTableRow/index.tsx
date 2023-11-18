@@ -10,18 +10,16 @@ interface Props{
     marginLeft?: number
     marginBottom?: number
     backgroundColor?: string
-    textStyle: {
-        color: string;
-        fontSize: number;
-        fontWeight: string;
-        textAlign: string;}
+    style?: any[]
+    textStyle?: any[]
 }
 
-export function CTableRow({ children, data, textStyle, ...rest }: Props){
+export function CTableRow({ children, data, textStyle, style, marginTop, marginRight, marginBottom, marginLeft, ...rest }: Props){
     return (
         <Container
             data={data}
             textStyle={textStyle}
+            style={style}
             {...rest}>
             {children}
         </Container>

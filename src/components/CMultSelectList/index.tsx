@@ -7,8 +7,8 @@ interface Props{
     placeholder?: string
 }
 
-export function CSelectList({ children, searchPlaceholder, placeholder, ...rest }: Props){
-    return(
+export function CMultSelectList({ children, searchPlaceholder, placeholder, ...rest }: Props){
+    return (
         <Container
             searchPlaceholder={searchPlaceholder}
             placeholder={placeholder}
