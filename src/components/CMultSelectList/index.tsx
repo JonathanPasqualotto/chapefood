@@ -5,9 +5,10 @@ interface Props{
     children?: any
     searchPlaceholder?: string
     placeholder?: string
+    defaultOption?: any
 }
 
-export function CMultSelectList({ children, searchPlaceholder, placeholder, ...rest }: Props){
+export function CMultSelectList({ children, searchPlaceholder, placeholder, defaultOption, ...rest }: Props){
     return (
         <Container
             searchPlaceholder={searchPlaceholder}
@@ -16,6 +17,7 @@ export function CMultSelectList({ children, searchPlaceholder, placeholder, ...r
             boxStyles={{ backgroundColor: 'white', marginTop: 20 }}
             dropdownStyles={{ backgroundColor: 'white' }}
             dropdownTextStyles={{ fontSize: 20 }}
+            defaultOption={defaultOption}
             {...rest}>
             {children}
         </Container>
