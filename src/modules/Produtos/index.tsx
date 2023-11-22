@@ -6,7 +6,6 @@ import {CIconButton} from "../../components/CIconButton";
 import {CCabecalhoHome} from "../../components/CCabecalhoHome";
 import {CColumn} from "../../components/CColumn";
 import {CTable} from "../../components/CTable";
-import {CSelectList} from "../../components/CSelectList";
 import {CTableRow} from "../../components/CTableRow";
 import {Checkbox} from "expo-checkbox";
 import {CMultSelectList} from "../../components/CMultSelectList";
@@ -44,12 +43,18 @@ export function SProdutos() {
     const [ dispValorUnitario, setDispValorUnitario ] = useState(null)
     const [ dispDescricao, setDispDescricao ] = useState(null)
 
-    async function handleDeleteProduto({ id }: IProdutos){
-        if (id !== null) {
+    async function handleDeleteProduto({ id, empresa }: IProdutos){
+        if (id !== null && (Array.isArray(empresa) && empresa.length !== 0)) {
             Alert.alert('Deseja excluir o item selecionado?', '', [{text: 'Não'}, {text: 'Sim', onPress: async () => {
+                    for (var i in empresa) {
+                        await api.delete('produtos/empresa/' + empresa[i] + '/produto/' + id)
+                            .catch(error => {
+                                console.error(error)
+                            })
+                    }
                     await api.delete('/produtos/' + id)
-                    await api.delete('produtos/empresa/'+40+'/produto/' + id)
-                    await api.delete('produtos/empresa/'+28+'/produto/' + id)
+
+                    //await api.delete('produtos/empresa/'+28+'/produto/' + id)
                 }}])
         }
         setModalVisibleEdit(false)
@@ -179,6 +184,7 @@ export function SProdutos() {
 
                                     <ColunaCheck>
                                         <Checkbox
+                                            style={{ margin: 15 }}
                                             onValueChange={setEditManufaturado}
                                             value={editManufaturado}
                                             color={'#fff'}
@@ -199,6 +205,8 @@ export function SProdutos() {
                                     <CColumn />
 
                                     <Coluna>
+                                        <CIconButton iconName="trash" color="red" size={50} onPress={() => handleDeleteProduto({ id: editProdutoId, empresa: selected.valueOf() })}/>
+
                                         <CIconButton iconName='save' color='black' size={50} onPress={() => handleEditProduto({
                                             id: editProdutoId,
                                             manufaturado: editManufaturado,
@@ -206,7 +214,6 @@ export function SProdutos() {
                                             valorunitario: editValorUnitario ? editValorUnitario.replace(/,/g, '.') : null,
                                             empresa: selected.valueOf()
                                         })} />
-                                        <CIconButton iconName="trash" color="red" size={50} onPress={() => handleDeleteProduto({ id: editProdutoId})}/>
                                     </Coluna>
                                 </HeaderModal>
                             </CColumn>
@@ -295,6 +302,7 @@ export function SProdutos() {
 
                                     <ColunaCheck>
                                         <Checkbox
+                                            style={{ margin: 15 }}
                                             onValueChange={setNovoManufaturado}
                                             value={novoManufaturado}
                                             color={'#FFF'}
@@ -315,12 +323,15 @@ export function SProdutos() {
 
                                     <CColumn />
 
-                                    <CIconButton marginLeft={280} iconName='save' color='black' size={40} onPress={() => handleNewProduto({
-                                        manufaturado: novoManufaturado,
-                                        descricao: novaDescricao,
-                                        valorunitario: novoValorUnitario ? novoValorUnitario.replace(/,/g, '.') : null,
-                                        empresa: selected.valueOf()
-                                    })} />
+                                    <Coluna>
+                                        <Text></Text>
+                                        <CIconButton  iconName='save' color='black' size={40} onPress={() => handleNewProduto({
+                                            manufaturado: novoManufaturado,
+                                            descricao: novaDescricao,
+                                            valorunitario: novoValorUnitario ? novoValorUnitario.replace(/,/g, '.') : null,
+                                            empresa: selected.valueOf()
+                                        })} />
+                                    </Coluna>
                                 </HeaderModal>
                             </CColumn>
                         </Modal>

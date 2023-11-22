@@ -178,13 +178,14 @@ export function SMesas() {
                                     <CColumn />
 
                                     <Coluna>
+                                        <CIconButton iconName="trash" color="red" size={50} onPress={() => handleDeleteMesa({ id: editMesaId})}/>
+
                                         <CIconButton iconName='save' color='black' size={50} onPress={() => handleEditMesa({
                                             id: editMesaId,
                                             descricao: editDescricao,
                                             capacidade: editCapacidade,
                                             empresa: selected
                                         })} />
-                                        <CIconButton iconName="trash" color="red" size={50} onPress={() => handleDeleteMesa({ id: editMesaId})}/>
                                     </Coluna>
                                 </HeaderModal>
                             </CColumn>
@@ -274,11 +275,14 @@ export function SMesas() {
 
                                     <CColumn />
 
-                                    <CIconButton marginLeft={280} iconName='save' color='black' size={40} onPress={() => handleNewMesa({
-                                        descricao: novaDescricao,
-                                        capacidade: novaCapacidade,
-                                        empresa: selected
-                                    })} />
+                                    <Coluna>
+                                        <Text></Text>
+                                        <CIconButton iconName='save' color='black' size={40} onPress={() => handleNewMesa({
+                                            descricao: novaDescricao,
+                                            capacidade: novaCapacidade,
+                                            empresa: selected
+                                        })} />
+                                    </Coluna>
                                 </HeaderModal>
                             </CColumn>
                         </Modal>

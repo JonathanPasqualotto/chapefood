@@ -177,6 +177,8 @@ export function SUsuarios() {
                                         />
                                         <CColumn />
                                         <Coluna>
+                                            <CIconButton iconName="trash" color="red" size={50} onPress={() => handleDeleteUsuario({ id: editUsuarioId})}/>
+
                                             <CIconButton iconName='save' color='black' size={50} onPress={() => handleEditUsuario({
                                                 id: editUsuarioId,
                                                 nome: editUsuario,
@@ -184,7 +186,6 @@ export function SUsuarios() {
                                                 login: editLogin,
                                                 cargo: editCargo
                                             })} />
-                                            <CIconButton iconName="trash" color="red" size={50} onPress={() => handleDeleteUsuario({ id: editUsuarioId})}/>
                                         </Coluna>
                                     </HeaderModal>
                                 </CColumn>
@@ -281,12 +282,15 @@ export function SUsuarios() {
 
                                     <CColumn />
 
-                                    <CIconButton marginLeft={280} iconName='save' color='black' size={40} onPress={() => handleNewUsuario({
-                                        nome: novoUsuario,
-                                        senha: novaSenha,
-                                        login: novoLogin,
-                                        cargo: novoCargo
-                                    })} />
+                                    <Coluna>
+                                        <Text></Text>
+                                        <CIconButton iconName='save' color='black' size={40} onPress={() => handleNewUsuario({
+                                            nome: novoUsuario,
+                                            senha: novaSenha,
+                                            login: novoLogin,
+                                            cargo: novoCargo
+                                        })} />
+                                    </Coluna>
                                 </HeaderModal>
                             </CColumn>
                         </Modal>

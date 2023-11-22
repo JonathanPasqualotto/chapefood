@@ -6,10 +6,9 @@ import {RFValue} from "react-native-responsive-fontsize";
 const ios = Platform.OS === 'ios';
 
 export const Header = styled.View`
-  //background-color: #159322;
   background-color: #008170;
   padding-left: ${ios ? 25 : 25}px;
-  padding-top: ${ios ? 25 : 25}px;
+  padding-top: ${ios ?  35 : 25}px;
   padding-bottom: ${ios ? 20 : 20}px;
 `;
 

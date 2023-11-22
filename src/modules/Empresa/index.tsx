@@ -118,7 +118,7 @@ export function SEmpresa() {
                                     }} />
                                 </CColumn>
                                 <HeaderModal>
-                                    <Text>*{dispEmpresa}</Text>
+                                    <Text>{dispEmpresa}</Text>
                                     <Input
                                         placeholder="Nome"
                                         autoCapitalize='none'
@@ -128,10 +128,11 @@ export function SEmpresa() {
                                     <CColumn />
 
                                     <Coluna>
+                                        <CIconButton iconName="trash" color="red" size={50} onPress={() => handleDeleteEmpresa({ id: editEmpresaId })} />
+
                                         <CIconButton iconName='save' color='black' size={50} onPress={() => handleEditEmpresa({
                                             id: editEmpresaId,
                                             nome: editEmpresa})} />
-                                        <CIconButton iconName="trash" color="red" size={50} onPress={() => handleDeleteEmpresa({ id: editEmpresaId })} />
                                     </Coluna>
                                 </HeaderModal>
                             </CColumn>
@@ -186,7 +187,7 @@ export function SEmpresa() {
                                 </CColumn>
                                 <HeaderModal>
                                     <Text>Cadastrar Empresa</Text>
-                                    <TextCad>*</TextCad>
+                                    <TextCad>* Nome</TextCad>
                                     <Input
                                         placeholder="Nome"
                                         autoCapitalize='none'
@@ -196,8 +197,10 @@ export function SEmpresa() {
 
                                     <CColumn />
 
-                                    <CIconButton marginLeft={280} iconName='save' color='black' size={40} onPress={() => {handleNewEmpresa({ nome: novaEmpresa})}} />
-
+                                    <Coluna>
+                                        <Text></Text>
+                                        <CIconButton iconName='save' color='black' size={40} onPress={() => {handleNewEmpresa({ nome: novaEmpresa})}} />
+                                    </Coluna>
                                 </HeaderModal>
                             </CColumn>
                         </Modal>
