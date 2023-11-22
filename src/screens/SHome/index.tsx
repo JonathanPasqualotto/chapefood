@@ -29,6 +29,10 @@ export function SHome(){
         navigation.navigate('Pedidos')
     }
 
+    function handleOrdemServico(){
+        navigation.navigate('OrdemServico')
+    }
+
     return (
         <Container>
             <CCabecalhoHome title="CHAPEFOOD" />
@@ -51,6 +55,9 @@ export function SHome(){
                     </MenuItem>
                     <MenuItem onPress={handlePedidos}>
                         <TextButton>Pedidos</TextButton>
+                    </MenuItem>
+                    <MenuItem onPress={handleOrdemServico}>
+                        <TextButton>Ordem de Serviço</TextButton>
                     </MenuItem>
                 </MenuGrid>
             </Body>

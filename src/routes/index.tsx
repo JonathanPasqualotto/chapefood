@@ -7,7 +7,7 @@ export function Routes() {
     const { user } = useAuth()
 
     // VERIFICA O CARGO DO USUARIO
-    const verificaCargo = user?.usuario && ['Atendente', 'Gerente', 'Garçom', 'Cozinheiro'].includes(user?.cargo);
+    const verificaCargo = user?.usuario && ['Atendente', 'Gerente', 'Cozinheiro'].includes(user?.cargo);
 
     function renderCargoRouter(cargo) {
         switch (cargo) {

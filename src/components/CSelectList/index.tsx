@@ -5,9 +5,10 @@ interface Props{
     children?: any
     searchPlaceholder?: string
     placeholder?: string
+    initialSelected?: string
 }
 
-export function CSelectList({ children, searchPlaceholder, placeholder, ...rest }: Props){
+export function CSelectList({ children, searchPlaceholder, placeholder, initialSelected, ...rest }: Props){
     return(
         <Container
             searchPlaceholder={searchPlaceholder}
@@ -16,6 +17,7 @@ export function CSelectList({ children, searchPlaceholder, placeholder, ...rest 
             boxStyles={{ backgroundColor: 'white', marginTop: 20 }}
             dropdownStyles={{ backgroundColor: 'white' }}
             dropdownTextStyles={{ fontSize: 20 }}
+            initialSelected={initialSelected}
             {...rest}>
             {children}
         </Container>
