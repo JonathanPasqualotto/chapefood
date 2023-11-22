@@ -11,6 +11,7 @@ interface Props{
 interface SingInCredentials{
     usuario: string
     senha: string
+    cargo: string
 }
 
 interface IAuthContextData{
@@ -25,7 +26,7 @@ function AuthProvider({ children } : Props){
     const [user, setUser ] = useState({} as SingInCredentials)
 
 
-    async function signIn({ usuario, senha } : SingInCredentials){
+    async function signIn({ usuario, senha, cargo } : SingInCredentials){
         await AsyncStorage.setItem('@chapeffod:usuario', usuario)
         await AsyncStorage.setItem('@chapefood:senha', senha)
 
@@ -37,7 +38,8 @@ function AuthProvider({ children } : Props){
             const data = request.data
             const statusCode = request.status
             if (statusCode === 200){
-                setUser({ usuario, senha })
+                 cargo = data.cargo
+                 setUser({ usuario, senha, cargo })
             } else {
                 throw { message: data.message, statusCode }
             }

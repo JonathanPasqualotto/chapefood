@@ -11,6 +11,7 @@ import {Platform} from "react-native";
 export default function SLogin(){
     const [usuario, setUsuario] = useState('')
     const [senha, setSenha] = useState('')
+    const [ cargo, setCargo ] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const { signIn } = useAuth()
 
@@ -27,7 +28,7 @@ export default function SLogin(){
             await shema.validate({usuario, senha})
             await AsyncStorage.setItem('@chapefood:usuarioLogado', usuario)
             await AsyncStorage.setItem('@chapefood:senhaLoagdo', senha)
-            await signIn({ usuario, senha })
+            await signIn({ usuario, senha, cargo })
         }
         catch (error) {
             setIsLoading(false)

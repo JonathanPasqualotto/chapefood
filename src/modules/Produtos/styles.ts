@@ -42,23 +42,23 @@ export const TextCad = styled.Text`
 
 export const HeaderModal = styled.View`
   background-color: #757779;
-  width: ${ios ? Width*0.9 : Width*0.9 }px;
-  height: ${ios ? Height*0.8 : Height*0.5 }px;
+  width: ${ios ? Width*0.9 : Width*0.8 }px;
+  height: ${ios ? Height*0.8 : Height*0.8 }px;
   padding: ${ios ? 15 : 10}px ${ios ? 20 : 28}px;
-  margin: ${ios ? 20 : 20}px ${ios ? 20 : 20}px;
-  border-radius: ${ios ? 20 : 20}px;
+  margin: ${ios ? 40 : 60}px ${ios ? 50 : 50}px;
+  border-radius: ${ios ? 30 : 30}px;
 `;
 
 export const Input = styled.TextInput`
   font-size: ${RFValue(15)}px;
-  margin-top: ${ios ? 20 : 20}px;
-  padding: ${ios ? 15 : 10}px ${ios ? 20 : 28}px;
+  margin-top: ${ios ? 15 : 15}px;
+  padding: ${ios ? 15 : 15}px ${ios ? 20 : 20}px;
   border: black 1px solid;
   border-radius: ${ios ? 20 : 20}px;
-  width: ${ios ? Width*0.8 : Width*0.5 };
+  width: ${ios ? Width*0.8 : Width*0.7 };
   background-color: white;
-  color: black;
 `;
+
 export const Footer = styled.View`
   align-items: flex-end;
   justify-content: right;
@@ -72,8 +72,8 @@ export const Coluna = styled.View`
 
 export const ColunaCheck = styled.View`
   flex-direction: row;
+  margin-top: ${ios ? 15 : 20}px;
+  padding-left: ${ios ? 60 : 60}px;
+  padding-right: ${ios ? 80 : 95}px;
   align-items: center;
-  margin-top: ${ios ? 20 : 20}px;
-  margin-bottom: ${ios ? 10 : 10}px;
-  align-self: center;
 `;

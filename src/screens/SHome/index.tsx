@@ -26,8 +26,7 @@ export function SHome(){
     }
 
     function handlePedidos() {
-        alert('ainda nao ta feita.')
-        //navigation.navigate('Pedidos')
+        navigation.navigate('Pedidos')
     }
 
     return (

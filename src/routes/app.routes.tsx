@@ -4,10 +4,11 @@ import {SEmpresa} from "../modules/Empresa";
 import {SUsuarios} from "../modules/Usuarios";
 import {SMesas} from "../modules/Mesas";
 import {SProdutos} from "../modules/Produtos";
+import {SPedidos} from "../modules/Pedidos";
 
 const { Screen, Navigator } = createNativeStackNavigator()
 
-export function AppRouter() {
+export function GerenteRouter() {
     return (
         <Navigator
             screenOptions={{
@@ -33,6 +34,10 @@ export function AppRouter() {
             <Screen
                 name="Produtos"
                 component={SProdutos}
+            />
+            <Screen
+                name="Pedidos"
+                component={SPedidos}
             />
         </Navigator>
     )
