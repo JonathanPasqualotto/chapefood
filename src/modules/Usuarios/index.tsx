@@ -77,6 +77,7 @@ export function SUsuarios() {
                     setNovoCargo(null)
                     setNovoLogin(null)
                     setNovaSenha(null)
+                    setSelected("")
                 })
                 .catch(error => {
                     console.log(error)
@@ -118,6 +119,7 @@ export function SUsuarios() {
         setEditCargo(null)
         setEditSenha(null)
         setModalVisibleEdit(false)
+        setSelected("")
     }
 
     useEffect(() => {
@@ -153,6 +155,7 @@ export function SUsuarios() {
                                     setEditLogin(null)
                                     setEditCargo(null)
                                     setEditSenha(null)
+                                    setSelected("")
                                 }}>
                                 <CColumn align='center'>
                                     <CColumn align='right' marginLeft={380} marginBottom={1}>
@@ -166,6 +169,7 @@ export function SUsuarios() {
                                             setEditLogin(null)
                                             setEditCargo(null)
                                             setEditSenha(null)
+                                            setSelected("")
                                         }} />
                                     </CColumn>
                                     <HeaderModal>
@@ -177,12 +181,6 @@ export function SUsuarios() {
                                             value={editUsuario}
                                         />
                                         <TextCad>{dispCargo}</TextCad>
-                                        <Input
-                                            placeholder="Cargo"
-                                            onChangeText={setEditCargo}
-                                            value={editCargo}
-                                        />
-
                                         <CSelectList
                                             setSelected={(val) => setSelected(val)}
                                             data={cargoOptions}
@@ -190,7 +188,6 @@ export function SUsuarios() {
                                             onSelect={() => selected}
                                             label="Cargo"
                                             searchPlaceholder="Pesquisar"
-                                            defaultOption={'1'} // VER ISSO NO DOC
                                         />
 
                                         <TextCad>{dispLogin}</TextCad>
@@ -217,7 +214,7 @@ export function SUsuarios() {
                                                 nome: editUsuario,
                                                 senha: editSenha,
                                                 login: editLogin,
-                                                cargo: editCargo
+                                                cargo: selected
                                             })} />
                                         </Coluna>
                                     </HeaderModal>
@@ -237,11 +234,11 @@ export function SUsuarios() {
                                    <CIconButton style={{ alignSelf: 'center' }} marginBottom={15} iconName="edit" color="blue" size={30} onPress={() => {
                                        setEditUsuarioId(item.id)
                                        setDispUsuario(item.nome)
-                                       setDispCargo(item.cargo)
+                                       setDispCargo(mapCargoValueToDescription(item.cargo))
                                        setDispLogin(item.login)
                                        setEditUsuario(item.nome)
                                        setEditLogin(item.login)
-                                       setEditCargo(item.cargo)
+                                       //setEditCargo(item.cargo)
                                       // setEditSenha(null)
                                        setModalVisibleEdit(true)
                                    }} />
@@ -299,7 +296,6 @@ export function SUsuarios() {
                                         onSelect={() => selected}
                                         label="Cargo"
                                         searchPlaceholder="Pesquisar"
-                                        initialSelected={editCargo}
                                     />
 
                                     <TextCad>*Login</TextCad>

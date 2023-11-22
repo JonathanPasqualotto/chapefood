@@ -53,12 +53,14 @@ export function SProdutos() {
                             })
                     }
                     await api.delete('/produtos/' + id)
-
-                    //await api.delete('produtos/empresa/'+28+'/produto/' + id)
                 }}])
+            setModalVisibleEdit(false)
+            setEditProdutoId(null)
+            setSelected("")
+        } else {
+            Alert.alert('Error', 'Informe pelo menos uma(1) empresa para poder deletar', [{ text: 'OK' }])
+            setModalVisibleEdit(true)
         }
-        setModalVisibleEdit(false)
-        setEditProdutoId(null)
     }
 
     async function handleNewProduto({ manufaturado, descricao, valorunitario, empresa }: IProdutos){
@@ -124,7 +126,6 @@ export function SProdutos() {
                 api.get('/produtos')
                     .then(response => {
                         setDados(response.data)
-                        console.log('d ',response.data)
                     })
                     .catch(error => {
                         console.log(error)
