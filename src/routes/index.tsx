@@ -7,15 +7,15 @@ export function Routes() {
     const { user } = useAuth()
 
     // VERIFICA O CARGO DO USUARIO
-    const verificaCargo = user?.usuario && ['0', '1', '2'].includes(user?.cargo);
+    const verificaCargo = user?.usuario && ['Gerente', 'Atendente', 'Cozinheiro'].includes(user?.cargo);
 
     function renderCargoRouter(cargo) {
         switch (cargo) {
-            case '0': // GERENTE
+            case 'Gerente':
                 return <GerenteRouter />;
-            case '1': // ATENDENTE
+            case 'Atendente':
                 return <AtendenteRouter />;
-            case '2': // COZINHEIRO
+            case 'Cozinheiro':
                 return <CozinheiroRouter />;
             default:
                 return <AuthRoutes /> // Rota para quem não tem permissão

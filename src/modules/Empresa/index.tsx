@@ -1,6 +1,6 @@
 import React from "react";
 import { CCabecalhoHome} from "../../components/CCabecalhoHome";
-import {Coluna, Container, Footer, HeaderModal, Input, Text, TextCad} from "./styles";
+import {Coluna, Container, Footer, HeaderModal, Input, InputSearch, Text, TextCad} from "./styles";
 import {CColumn} from "../../components/CColumn";
 import {CIconButton} from "../../components/CIconButton";
 import api from "../../utils/api";
@@ -19,6 +19,8 @@ export function SEmpresa() {
     const [ dados, setDados ] = useState([])
     const [ modalVisibleEdit, setModalVisibleEdit] = useState(false)
     const [ modalVisibleNew, setModalVisibleNew ] = useState(false)
+    const [ searchEmpresa, setSearchEmpresa ] = useState(null)
+    const [ filteredData, setFilteredData ] = useState([]);
 
     // VARIAVEIS DE EDITÇÃO
     const [ editEmpresa, setEditEmpresa] = useState(null)
@@ -34,10 +36,14 @@ export function SEmpresa() {
         if (id !== null) {
             Alert.alert('Deseja excluir o item selecionado?', '', [{text: 'Não'}, {text: 'Sim', onPress: async () => {
                 await api.delete('/empresas/' + id)
+                    .then(resp =>{
+                        setEditEmpresaId(null)
+                        setModalVisibleEdit(false)
+                        handleSearch({ id: '' })
+                        setFilteredData([])
+                    })
                 }}])
         }
-        setEditEmpresaId(null)
-        setModalVisibleEdit(false)
     }
 
     async function handleEditEmpresa({ id, nome }: IEmpresa){
@@ -50,7 +56,8 @@ export function SEmpresa() {
                     setEditEmpresaId(null)
                     setEditEmpresa(null)
                     setModalVisibleEdit(false)
-
+                    handleSearch({ id: '' })
+                    setFilteredData([])
                 })
                 .catch(error => {
                     console.log(error)
@@ -67,7 +74,8 @@ export function SEmpresa() {
                     Alert.alert('Cadastro realizado com sucesso', '', [{text: 'OK'}])
                     setModalVisibleNew(false);
                     setNovaEmpresa(null)
-
+                    handleSearch({ id: '' })
+                    setFilteredData([])
                 })
                 .catch(error => {
                     console.log(error)
@@ -76,6 +84,17 @@ export function SEmpresa() {
             Alert.alert('Campos obrigatórios(*) não preenchidos ')
             setModalVisibleNew(true)
         }
+    }
+
+    async function handleSearch({ nome }: IEmpresa) {
+        await api.get('/empresas')
+            .then(response => {
+                const filteredResults = response.data.filter(item => item.nome.toLowerCase().includes(nome.toLowerCase()));
+                setFilteredData(filteredResults);
+            })
+            .catch(error => {
+                console.log(error)
+            })
     }
 
     useEffect(() => {
@@ -90,7 +109,23 @@ export function SEmpresa() {
 
     return (
         <Container>
+
+
             <CCabecalhoHome title='Empresa' />
+
+            <Coluna>
+                <InputSearch
+                    placeholder="Pesquisar Empresa..."
+                    placeholderTextColor='white'
+                    onChangeText={(text) => {
+                        setSearchEmpresa(text);
+                        handleSearch({ nome: text });
+                    }}
+                    value={searchEmpresa}
+                />
+                <CIconButton iconName='search' color='white' size={30} onPress={() => handleSearch({
+                    id: searchEmpresa })} />
+            </Coluna>
 
             <CTable>
 
@@ -143,20 +178,36 @@ export function SEmpresa() {
                 }
 
                 <CTableRow backgroundColor='green' data={["Nome",""]} textStyle={{ color: 'white', fontSize: 18, fontWeight: 'bold', textAlign: 'center' }} />
-                    {Array.isArray(dados) && dados.map((item, index) => (
-                        <CTableRow backgroundColor='white' key={index} textStyle={{ color: 'black', fontSize: 18, fontWeight: 'normal', textAlign: 'center' }}
-                           data={[item.nome,
+                    {Array.isArray(filteredData) && filteredData.length > 0
+                        ? filteredData.map((item, index) => (
+                            <CTableRow backgroundColor='white' key={index} textStyle={{ color: 'black', fontSize: 18, fontWeight: 'normal', textAlign: 'center' }}
+                                       data={[item.nome,
 
-                               <CIconButton style={{ alignSelf: 'center' }} marginBottom={15} iconName="edit" color="blue" size={30} onPress={() => {
-                                   setEditEmpresaId(item.id)
-                                   setDispEmpresa(item.nome)
-                                   setModalVisibleEdit(true)
-                                   setEditEmpresa(null)
+                                           <CIconButton style={{ alignSelf: 'center' }} marginBottom={15} iconName="edit" color="blue" size={30} onPress={() => {
+                                               setEditEmpresaId(item.id)
+                                               setDispEmpresa(item.nome)
+                                               setModalVisibleEdit(true)
+                                               setEditEmpresa(null)
 
-                               }} />
+                                           }} />
 
-                           ]}
-                        />
+                                       ]}
+                            />
+                        ))
+                        : Array.isArray(dados) && dados.map((item, index) => (
+                            <CTableRow backgroundColor='white' key={index} textStyle={{ color: 'black', fontSize: 18, fontWeight: 'normal', textAlign: 'center' }}
+                               data={[item.nome,
+
+                                   <CIconButton style={{ alignSelf: 'center' }} marginBottom={15} iconName="edit" color="blue" size={30} onPress={() => {
+                                       setEditEmpresaId(item.id)
+                                       setDispEmpresa(item.nome)
+                                       setModalVisibleEdit(true)
+                                       setEditEmpresa(null)
+
+                                   }} />
+
+                               ]}
+                            />
                     ))}
             </CTable>
 

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Body, Container, Footer, HeaderModal, Input, TextCad, Text, Coluna, ColunaCheck} from "./styles";
+import {Body, Container, Footer, HeaderModal, Input, TextCad, Text, Coluna, ColunaCheck, InputSearch} from "./styles";
 import api from "../../utils/api";
 import {Modal, Alert} from 'react-native';
 import {CIconButton} from "../../components/CIconButton";
@@ -25,6 +25,8 @@ export function SProdutos() {
     const [ modalVisibleEdit, setModalVisibleEdit] = useState(false);
     const [ selected, setSelected ] = useState("")
     const [ selectEmpresa, setSelectEmpresa ] = useState([])
+    const [ searchProduto , setSearchProduto ] = useState(null)
+    const [ filteredData , setFilteredData ] = useState([]);
 
     // VARIAVEIS PARA CRIAÇÃO
     const [ novoManufaturado, setNovoManufaturado ] = useState(false)
@@ -52,11 +54,13 @@ export function SProdutos() {
                                 console.error(error)
                             })
                     }
-                    await api.delete('/produtos/' + id)
+                    await api.delete('/produtos/' + id).then(resp =>{
+                        setModalVisibleEdit(false)
+                        setEditProdutoId(null)
+                        setSelected("")
+                        setFilteredData([])
+                    })
                 }}])
-            setModalVisibleEdit(false)
-            setEditProdutoId(null)
-            setSelected("")
         } else {
             Alert.alert('Error', 'Informe pelo menos uma(1) empresa para poder deletar', [{ text: 'OK' }])
             setModalVisibleEdit(true)
@@ -78,6 +82,7 @@ export function SProdutos() {
                     setNovoManufaturado(false)
                     setNovoValorUnitario(null)
                     setSelected("")
+                    setFilteredData([])
                 })
                 .catch(error => {
                     console.log(error)
@@ -98,19 +103,41 @@ export function SProdutos() {
             })
                 .then(response => {
                     Alert.alert('Ajustes realizados com sucesso', '', [{text: 'OK'}])
+                    setModalVisibleEdit(false);
+                    setEditDescricao(null)
+                    setEditProdutoId(null)
+                    setEditManufaturado(false)
+                    setEditValorUnitario(null)
+                    setSelected("")
+                    setFilteredData([])
                 })
                 .catch(error => {
                     console.log(error)
                 })
         }
-        setModalVisibleEdit(false);
-        setEditDescricao(null)
-        setEditProdutoId(null)
-        setEditManufaturado(false)
-        setEditValorUnitario(null)
-        setSelected("")
     }
 
+    async function handleSearch({ descricao }: IProdutos) {
+        await api.get('/produtos')
+            .then(response => {
+                const filteredResults = response.data.filter(item => item.descricao.toLowerCase().includes(descricao.toLowerCase()));
+                setFilteredData(filteredResults);
+            })
+            .catch(error => {
+                console.log(error)
+            }),
+        await api.get('/empresas')
+            .then(resp => {
+                let empresa = resp.data.map((item) => {
+                    return {key: item.id, value: item.nome}
+                })
+                setSelectEmpresa(empresa)
+            })
+            .catch(erro => {
+                console.log(erro)
+            })
+
+    }
 
     useEffect(() => {
             api.get('/empresas')
@@ -134,6 +161,21 @@ export function SProdutos() {
     return (
         <Container>
             <CCabecalhoHome title="Produtos" />
+
+            <Coluna>
+                <InputSearch
+                    placeholder="Pesquisar Produto..."
+                    placeholderTextColor='white'
+                    onChangeText={(text) => {
+                        setSearchProduto(text);
+                        handleSearch({ descricao: text });
+                    }}
+                    value={searchProduto}
+                />
+                <CIconButton iconName='search' color='white' size={30} onPress={() => handleSearch({
+                    id: searchEmpresa })} />
+            </Coluna>
+
             <Body>
                 <CTable>
 
@@ -228,28 +270,52 @@ export function SProdutos() {
 
                     <CTableRow backgroundColor='green' data={["Descrição","Vlr Uni","Manuf",""]} textStyle={[{ color: 'white', fontSize: 18, fontWeight: 'bold', textAlign: 'center' }]}/>
 
-                    {Array.isArray(dados) && dados.map((item, index) => (
-                        <CTableRow backgroundColor='white' key={index} textStyle={[{color: 'black', fontSize: 18, fontWeight: 'normal', textAlign: 'center'}]}
-                                   data={[item.descricao, item.valorunitario,
+                    {Array.isArray(filteredData) && filteredData.length > 0
+                        ? filteredData.map((item, index) => (
+                            <CTableRow backgroundColor='white' key={index} textStyle={[{color: 'black', fontSize: 18, fontWeight: 'normal', textAlign: 'center'}]}
+                                       data={[item.descricao, item.valorunitario,
 
-                                       <Checkbox
-                                           disabled
-                                           value={item.manufaturado}
-                                           style={{ alignSelf: 'center' }}
-                                       />,
+                                           <Checkbox
+                                               disabled
+                                               value={item.manufaturado}
+                                               style={{ alignSelf: 'center' }}
+                                           />,
 
-                                       <CIconButton style={{ alignSelf: 'center' }} marginBottom={15} iconName="edit" color="blue" size={30} onPress={() => {
-                                           setModalVisibleEdit(true)
-                                           setDispDescricao(item.descricao)
-                                           setDispValorUnitario(item.valorunitario)
-                                           setEditProdutoId(item.id)
-                                           setEditManufaturado(item.manufaturado)
-                                           setEditValorUnitario(item.valorunitario)
-                                           setEditDescricao(item.descricao)
-                                       }} />
+                                           <CIconButton style={{ alignSelf: 'center' }} marginBottom={15} iconName="edit" color="blue" size={30} onPress={() => {
+                                               setModalVisibleEdit(true)
+                                               setDispDescricao(item.descricao)
+                                               setDispValorUnitario(item.valorunitario)
+                                               setEditProdutoId(item.id)
+                                               setEditManufaturado(item.manufaturado)
+                                               setEditValorUnitario(item.valorunitario)
+                                               setEditDescricao(item.descricao)
+                                           }} />
 
-                                   ]}
-                        />
+                                       ]}
+                            />
+                        ))
+                        : Array.isArray(dados) && dados.map((item, index) => (
+                            <CTableRow backgroundColor='white' key={index} textStyle={[{color: 'black', fontSize: 18, fontWeight: 'normal', textAlign: 'center'}]}
+                                       data={[item.descricao, item.valorunitario,
+
+                                           <Checkbox
+                                               disabled
+                                               value={item.manufaturado}
+                                               style={{ alignSelf: 'center' }}
+                                           />,
+
+                                           <CIconButton style={{ alignSelf: 'center' }} marginBottom={15} iconName="edit" color="blue" size={30} onPress={() => {
+                                               setModalVisibleEdit(true)
+                                               setDispDescricao(item.descricao)
+                                               setDispValorUnitario(item.valorunitario)
+                                               setEditProdutoId(item.id)
+                                               setEditManufaturado(item.manufaturado)
+                                               setEditValorUnitario(item.valorunitario)
+                                               setEditDescricao(item.descricao)
+                                           }} />
+
+                                       ]}
+                            />
                     ))}
                 </CTable>
             </Body>

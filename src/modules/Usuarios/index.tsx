@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import api from "../../utils/api";
-import {Coluna, Container, Footer, HeaderModal, Input, Text, TextCad} from "./styles";
+import {Coluna, Container, Footer, HeaderModal, Input, Text, TextCad, InputSearch} from "./styles";
 import {CCabecalhoHome} from "../../components/CCabecalhoHome";
 import {CColumn} from "../../components/CColumn";
 import {Alert, Modal} from "react-native";
@@ -13,8 +13,14 @@ interface IUsuario{
     id: number
     nome: string
     senha: string
-    cargo: string
+    cargo: CargoOptions
     login: string
+}
+
+enum CargoOptions {
+    Atendente = 'Atendente',
+    Gerente = 'Gerente',
+    Cozinheiro = 'Cozinheiro',
 }
 
 export function SUsuarios() {
@@ -22,14 +28,20 @@ export function SUsuarios() {
     const [ modalVisibleNew, setModalVisibleNew ] = useState(false)
     const [ modalVisibleEdit, setModalVisibleEdit] = useState(false)
     const [ selected, setSelected ] = useState('')
-    const [ selectCargo, setSelectCargo ] = useState('');
+    const [selectCargo, setSelectCargo] = useState<CargoOptions[]>([
+        CargoOptions.Gerente,
+        CargoOptions.Atendente,
+        CargoOptions.Cozinheiro,
+    ]);
 
     // VARIAVEIS PARA EDIÇÃO
     const [ editUsuarioId, setEditUsuarioId] = useState(null)
     const [ editUsuario, setEditUsuario] = useState(null)
-    const [ editCargo, setEditCargo] = useState(null);
+    const [ editCargo , setEditCargo ] = useState<CargoOptions | null>(null);
     const [ editSenha, setEditSenha ] = useState(null)
     const [ editLogin, setEditLogin ] = useState(null)
+    const [ searchUsuario, setSearchUsuario ] = useState(null)
+    const [ filteredData, setFilteredData ] = useState([]);
 
     // VARIAVEIS ṔARA EXIBIR
     const [ dispUsuario, setDispUsuario ] = useState(null)
@@ -38,31 +50,11 @@ export function SUsuarios() {
 
     // VARIAVEIS PARA CRIAÇÃO
     const [ novoUsuario, setNovoUsuario ] = useState(null)
-    const [ novoCargo, setNovoCargo] = useState(null);
+    const [ novoCargo, setNovoCargo ] = useState<CargoOptions | null>(null);
     const [ novoLogin, setNovoLogin ] = useState(null)
     const [ novaSenha, setNovaSenha ] = useState(null)
 
-    const cargoOptions = [
-        {key:'0', value:'Gerente'},
-        {key:'1', value:'Atendente'},
-        {key:'2', value:'Cozinheiro'},
-    ]
-
-    const mapCargoValueToDescription = (value: number): string => {
-        switch (value) {
-            case '0':
-                return 'Gerente';
-            case '1':
-                return 'Atendente';
-            case '2':
-                return 'Cozinheiro';
-            default:
-                return ''; // ou outra ação padrão, dependendo dos seus requisitos
-        }
-    };
-
     async function handleNewUsuario({ nome, senha, login, cargo }: IUsuario){
-        console.log(cargo)
         if (nome !== null && senha !== null && login !== null && cargo !== null){
             await api.post('/usuarios', {
                 nome,
@@ -78,6 +70,7 @@ export function SUsuarios() {
                     setNovoLogin(null)
                     setNovaSenha(null)
                     setSelected("")
+                    setFilteredData([])
                 })
                 .catch(error => {
                     console.log(error)
@@ -92,10 +85,13 @@ export function SUsuarios() {
         if (id !== null) {
             Alert.alert('Deseja excluir o item selecionado?', '', [{text: 'Não'}, {text: 'Sim', onPress: async () => {
                     await api.delete('/usuarios/' + id)
+                        .then(resp => {
+                            setModalVisibleEdit(false)
+                            setEditUsuarioId(null)
+                            setFilteredData([])
+                        })
                 }}])
         }
-        setModalVisibleEdit(false)
-        setEditUsuarioId(null)
     }
 
     async function handleEditUsuario({ id, nome, senha, login, cargo }: IUsuario) {
@@ -108,18 +104,30 @@ export function SUsuarios() {
             })
                 .then(response => {
                     Alert.alert('Ajustes realizados com sucesso', '', [{text: 'OK'}])
+                    setEditUsuarioId(null);
+                    setEditUsuario(null)
+                    setEditLogin(null)
+                    setEditCargo(null)
+                    setEditSenha(null)
+                    setModalVisibleEdit(false)
+                    setSelected("")
+                    setFilteredData([])
                 })
                 .catch(error => {
                     console.log(error)
                 });
         }
-        setEditUsuarioId(null);
-        setEditUsuario(null)
-        setEditLogin(null)
-        setEditCargo(null)
-        setEditSenha(null)
-        setModalVisibleEdit(false)
-        setSelected("")
+    }
+
+    async function handleSearch({ nome }: IUsuario) {
+        await api.get('/usuarios')
+            .then(response => {
+                const filteredResults = response.data.filter(item => item.nome.toLowerCase().includes(nome.toLowerCase()));
+                setFilteredData(filteredResults);
+            })
+            .catch(error => {
+                console.log(error)
+            })
     }
 
     useEffect(() => {
@@ -135,6 +143,20 @@ export function SUsuarios() {
     return (
         <Container>
             <CCabecalhoHome title="Usuários" />
+
+            <Coluna>
+                <InputSearch
+                    placeholder="Pesquisar Usuário..."
+                    placeholderTextColor='white'
+                    onChangeText={(text) => {
+                        setSearchUsuario(text);
+                        handleSearch({ nome: text });
+                    }}
+                    value={searchUsuario}
+                />
+                <CIconButton iconName='search' color='white' size={30} onPress={() => handleSearch({
+                    nome: searchUsuario })} />
+            </Coluna>
 
                 <CTable>
 
@@ -227,24 +249,44 @@ export function SUsuarios() {
 
                     <CTableRow backgroundColor='green' data={["Nome","Cargo","Login","Senha",""]} textStyle={{ color: 'white', fontSize: 18, fontWeight: 'bold', textAlign: 'center' }} />
 
-                        {Array.isArray(dados) && dados.map((item, index) => (
-                            <CTableRow backgroundColor='white' key={index} textStyle={{ color: 'black', fontSize: 18, fontWeight: 'normal', textAlign: 'center' }}
-                               data={[item.nome, mapCargoValueToDescription(item.cargo), item.login, "*",
+                        {Array.isArray(filteredData) && filteredData.length > 0
+                            ? filteredData.map((item, index) => (
+                                <CTableRow backgroundColor='white' key={index} textStyle={{ color: 'black', fontSize: 18, fontWeight: 'normal', textAlign: 'center' }}
+                                           data={[item.nome, item.cargo, item.login, "*",
 
-                                   <CIconButton style={{ alignSelf: 'center' }} marginBottom={15} iconName="edit" color="blue" size={30} onPress={() => {
-                                       setEditUsuarioId(item.id)
-                                       setDispUsuario(item.nome)
-                                       setDispCargo(mapCargoValueToDescription(item.cargo))
-                                       setDispLogin(item.login)
-                                       setEditUsuario(item.nome)
-                                       setEditLogin(item.login)
-                                       //setEditCargo(item.cargo)
-                                      // setEditSenha(null)
-                                       setModalVisibleEdit(true)
-                                   }} />
+                                               <CIconButton style={{ alignSelf: 'center' }} marginBottom={15} iconName="edit" color="blue" size={30} onPress={() => {
+                                                   setEditUsuarioId(item.id)
+                                                   setDispUsuario(item.nome)
+                                                   setDispCargo(item.cargo)
+                                                   setDispLogin(item.login)
+                                                   setEditUsuario(item.nome)
+                                                   setEditLogin(item.login)
+                                                   //setEditCargo(item.cargo)
+                                                   // setEditSenha(null)
+                                                   setModalVisibleEdit(true)
+                                               }} />
 
-                               ]}
-                            />
+                                           ]}
+                                />
+                            ))
+                            : Array.isArray(dados) && dados.map((item, index) => (
+                                <CTableRow backgroundColor='white' key={index} textStyle={{ color: 'black', fontSize: 18, fontWeight: 'normal', textAlign: 'center' }}
+                                   data={[item.nome, item.cargo, item.login, "*",
+
+                                       <CIconButton style={{ alignSelf: 'center' }} marginBottom={15} iconName="edit" color="blue" size={30} onPress={() => {
+                                           setEditUsuarioId(item.id)
+                                           setDispUsuario(item.nome)
+                                           setDispCargo(item.cargo)
+                                           setDispLogin(item.login)
+                                           setEditUsuario(item.nome)
+                                           setEditLogin(item.login)
+                                           //setEditCargo(item.cargo)
+                                          // setEditSenha(null)
+                                           setModalVisibleEdit(true)
+                                       }} />
+
+                                   ]}
+                                />
                         ))}
 
                 </CTable>
@@ -291,7 +333,7 @@ export function SUsuarios() {
                                     <TextCad>*Cargo</TextCad>
                                     <CSelectList
                                         setSelected={(val) => setSelected(val)}
-                                        data={cargoOptions}
+                                        data={selectCargo}
                                         save="key"
                                         onSelect={() => selected}
                                         label="Cargo"

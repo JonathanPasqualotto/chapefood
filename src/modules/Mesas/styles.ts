@@ -59,3 +59,15 @@ export const Coluna = styled.View`
   flex-direction: row;
   justify-content: space-between;
 `;
+
+export const InputSearch = styled.TextInput`
+  font-size: ${RFValue(15)}px;
+  margin-top: ${ios ? 15 : 15}px;
+  margin-bottom: ${ios ? 0 : 10}px;
+  padding: ${ios ? 10 : 15}px ${ios ? 8 : 8}px;
+  margin-left: ${ios ? 10 : 20}px;
+  border-bottom-width: 2px;
+  border-bottom-color: white;
+  color: white;
+  width: ${ios ? Width*0.8 : Width*0.8 };
+`;
