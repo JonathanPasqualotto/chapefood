@@ -37,7 +37,11 @@ export function SUsuarios() {
     // VARIAVEIS PARA EDIÇÃO
     const [ editUsuarioId, setEditUsuarioId] = useState(null)
     const [ editUsuario, setEditUsuario] = useState(null)
-    const [ editCargo , setEditCargo ] = useState<CargoOptions | null>(null);
+    const [ editCargo , setEditCargo ] = useState<CargoOptions[]>([
+        CargoOptions.Gerente,
+        CargoOptions.Atendente,
+        CargoOptions.Cozinheiro,
+    ]);
     const [ editSenha, setEditSenha ] = useState(null)
     const [ editLogin, setEditLogin ] = useState(null)
     const [ searchUsuario, setSearchUsuario ] = useState(null)
@@ -45,12 +49,16 @@ export function SUsuarios() {
 
     // VARIAVEIS ṔARA EXIBIR
     const [ dispUsuario, setDispUsuario ] = useState(null)
-    const [ dispCargo, setDispCargo ] = useState<string | null>(null)
+    const [ dispCargo, setDispCargo ] = useState(null)
     const [ dispLogin, setDispLogin ] = useState(null)
 
     // VARIAVEIS PARA CRIAÇÃO
     const [ novoUsuario, setNovoUsuario ] = useState(null)
-    const [ novoCargo, setNovoCargo ] = useState<CargoOptions | null>(null);
+    const [ novoCargo, setNovoCargo ] = useState<CargoOptions[]>([
+        CargoOptions.Gerente,
+        CargoOptions.Atendente,
+        CargoOptions.Cozinheiro,
+    ]);
     const [ novoLogin, setNovoLogin ] = useState(null)
     const [ novaSenha, setNovaSenha ] = useState(null)
 
@@ -205,7 +213,7 @@ export function SUsuarios() {
                                         <TextCad>{dispCargo}</TextCad>
                                         <CSelectList
                                             setSelected={(val) => setSelected(val)}
-                                            data={cargoOptions}
+                                            data={editCargo}
                                             save="key"
                                             onSelect={() => selected}
                                             label="Cargo"
@@ -261,8 +269,6 @@ export function SUsuarios() {
                                                    setDispLogin(item.login)
                                                    setEditUsuario(item.nome)
                                                    setEditLogin(item.login)
-                                                   //setEditCargo(item.cargo)
-                                                   // setEditSenha(null)
                                                    setModalVisibleEdit(true)
                                                }} />
 
@@ -280,8 +286,6 @@ export function SUsuarios() {
                                            setDispLogin(item.login)
                                            setEditUsuario(item.nome)
                                            setEditLogin(item.login)
-                                           //setEditCargo(item.cargo)
-                                          // setEditSenha(null)
                                            setModalVisibleEdit(true)
                                        }} />
 
