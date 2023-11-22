@@ -5,6 +5,7 @@ import {SUsuarios} from "../modules/Usuarios";
 import {SMesas} from "../modules/Mesas";
 import {SProdutos} from "../modules/Produtos";
 import {SPedidos} from "../modules/Pedidos";
+import {SOrdemServico} from "../modules/OrdemServico";
 
 const { Screen, Navigator } = createNativeStackNavigator()
 
@@ -38,6 +39,10 @@ export function GerenteRouter() {
             <Screen
                 name="Pedidos"
                 component={SPedidos}
+            />
+            <Screen
+                name="OrdemServico"
+                component={SOrdemServico}
             />
         </Navigator>
     )

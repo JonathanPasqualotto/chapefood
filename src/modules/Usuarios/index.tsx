@@ -7,6 +7,7 @@ import {Alert, Modal} from "react-native";
 import {CIconButton} from "../../components/CIconButton";
 import {CTable} from "../../components/CTable";
 import {CTableRow} from "../../components/CTableRow";
+import {CSelectList} from "../../components/CSelectList";
 
 interface IUsuario{
     id: number
@@ -20,27 +21,48 @@ export function SUsuarios() {
     const [ dados, setDados ] = useState([])
     const [ modalVisibleNew, setModalVisibleNew ] = useState(false)
     const [ modalVisibleEdit, setModalVisibleEdit] = useState(false)
+    const [ selected, setSelected ] = useState('')
+    const [ selectCargo, setSelectCargo ] = useState('');
 
     // VARIAVEIS PARA EDIÇÃO
     const [ editUsuarioId, setEditUsuarioId] = useState(null)
     const [ editUsuario, setEditUsuario] = useState(null)
-    const [ editCargo, setEditCargo ] = useState(null)
+    const [ editCargo, setEditCargo] = useState(null);
     const [ editSenha, setEditSenha ] = useState(null)
     const [ editLogin, setEditLogin ] = useState(null)
 
     // VARIAVEIS ṔARA EXIBIR
     const [ dispUsuario, setDispUsuario ] = useState(null)
-    const [ dispCargo, setDispCargo ] = useState(null)
+    const [ dispCargo, setDispCargo ] = useState<string | null>(null)
     const [ dispLogin, setDispLogin ] = useState(null)
 
     // VARIAVEIS PARA CRIAÇÃO
     const [ novoUsuario, setNovoUsuario ] = useState(null)
-    const [ novoCargo, setNovoCargo ] = useState(null)
+    const [ novoCargo, setNovoCargo] = useState(null);
     const [ novoLogin, setNovoLogin ] = useState(null)
     const [ novaSenha, setNovaSenha ] = useState(null)
 
+    const cargoOptions = [
+        {key:'0', value:'Gerente'},
+        {key:'1', value:'Atendente'},
+        {key:'2', value:'Cozinheiro'},
+    ]
+
+    const mapCargoValueToDescription = (value: number): string => {
+        switch (value) {
+            case '0':
+                return 'Gerente';
+            case '1':
+                return 'Atendente';
+            case '2':
+                return 'Cozinheiro';
+            default:
+                return ''; // ou outra ação padrão, dependendo dos seus requisitos
+        }
+    };
 
     async function handleNewUsuario({ nome, senha, login, cargo }: IUsuario){
+        console.log(cargo)
         if (nome !== null && senha !== null && login !== null && cargo !== null){
             await api.post('/usuarios', {
                 nome,
@@ -160,6 +182,17 @@ export function SUsuarios() {
                                             onChangeText={setEditCargo}
                                             value={editCargo}
                                         />
+
+                                        <CSelectList
+                                            setSelected={(val) => setSelected(val)}
+                                            data={cargoOptions}
+                                            save="key"
+                                            onSelect={() => selected}
+                                            label="Cargo"
+                                            searchPlaceholder="Pesquisar"
+                                            defaultOption={'1'} // VER ISSO NO DOC
+                                        />
+
                                         <TextCad>{dispLogin}</TextCad>
                                         <Input
                                             placeholder="Login"
@@ -199,7 +232,7 @@ export function SUsuarios() {
 
                         {Array.isArray(dados) && dados.map((item, index) => (
                             <CTableRow backgroundColor='white' key={index} textStyle={{ color: 'black', fontSize: 18, fontWeight: 'normal', textAlign: 'center' }}
-                               data={[item.nome, item.cargo, item.login, "*",
+                               data={[item.nome, mapCargoValueToDescription(item.cargo), item.login, "*",
 
                                    <CIconButton style={{ alignSelf: 'center' }} marginBottom={15} iconName="edit" color="blue" size={30} onPress={() => {
                                        setEditUsuarioId(item.id)
@@ -259,11 +292,16 @@ export function SUsuarios() {
                                         value={novoUsuario}
                                     />
                                     <TextCad>*Cargo</TextCad>
-                                    <Input
-                                        placeholder="Cargo"
-                                        onChangeText={setNovoCargo}
-                                        value={novoCargo}
+                                    <CSelectList
+                                        setSelected={(val) => setSelected(val)}
+                                        data={cargoOptions}
+                                        save="key"
+                                        onSelect={() => selected}
+                                        label="Cargo"
+                                        searchPlaceholder="Pesquisar"
+                                        initialSelected={editCargo}
                                     />
+
                                     <TextCad>*Login</TextCad>
                                     <Input
                                         placeholder="Login"
@@ -288,7 +326,7 @@ export function SUsuarios() {
                                             nome: novoUsuario,
                                             senha: novaSenha,
                                             login: novoLogin,
-                                            cargo: novoCargo
+                                            cargo: selected
                                         })} />
                                     </Coluna>
                                 </HeaderModal>

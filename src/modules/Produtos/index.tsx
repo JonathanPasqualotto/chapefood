@@ -124,6 +124,7 @@ export function SProdutos() {
                 api.get('/produtos')
                     .then(response => {
                         setDados(response.data)
+                        console.log('d ',response.data)
                     })
                     .catch(error => {
                         console.log(error)
