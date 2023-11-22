@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Body, Container, Footer, HeaderModal, Input, TextCad, Text, Coluna} from "./styles";
+import {Body, Container, Footer, HeaderModal, Input, TextCad, Text, Coluna, InputSearch} from "./styles";
 import api from "../../utils/api";
 import {Modal, Alert} from 'react-native';
 import {CIconButton} from "../../components/CIconButton";
@@ -23,6 +23,8 @@ export function SMesas() {
     const [ modalVisibleEdit, setModalVisibleEdit] = useState(false);
     const [ selected, setSelected ] = useState("")
     const [ selectEmpresa, setSelectEmpresa ] = useState([])
+    const [ searchMesas , setSearchMesas ] = useState(null)
+    const [ filteredData, setFilteredData ] = useState([]);
 
     // VARIAVEIS PARA CRIAÇÃO
     const [ novaCapacidade, setNovaCapacidade ] = useState(null)
@@ -43,10 +45,14 @@ export function SMesas() {
         if (id !== null) {
             Alert.alert('Deseja excluir o item selecionado?', '', [{text: 'Não'}, {text: 'Sim', onPress: async () => {
                     await api.delete('/mesas/' + id)
+                        .then(resp =>{
+                            setModalVisibleEdit(false)
+                            setEditMesaId(null)
+                            handleSearch({ id: '' })
+                            setFilteredData([])
+                        })
                 }}])
         }
-        setModalVisibleEdit(false)
-        setEditMesaId(null)
     }
 
     async function handleNewMesa({ capacidade, descricao, empresa }: IMesa){
@@ -62,6 +68,8 @@ export function SMesas() {
                     setNovaDescricao(null)
                     setNovaCapacidade(null)
                     setSelected("")
+                    handleSearch({ id: '' })
+                    setFilteredData([])
                 })
                 .catch(error => {
                     console.log(error)
@@ -80,19 +88,40 @@ export function SMesas() {
                 empresa
             })
                 .then(response => {
-                    //console.log('OK')
                     Alert.alert('Ajustes realizados com sucesso', '', [{text: 'OK'}])
+                    setModalVisibleEdit(false);
+                    setEditDescricao(null)
+                    setEditCapacidade(null)
+                    setEditMesaId(null)
+                    handleSearch({ id: '' })
+                    setFilteredData([])
                 })
                 .catch(error => {
                     console.log(error)
                 })
         }
-        setModalVisibleEdit(false);
-        setEditDescricao(null)
-        setEditCapacidade(null)
-        setEditMesaId(null)
     }
 
+    async function handleSearch({ descricao }: IMesa) {
+        await api.get('/mesas')
+            .then(response => {
+                const filteredResults = response.data.filter(item => item.descricao.toLowerCase().includes(descricao.toLowerCase()));
+                setFilteredData(filteredResults);
+            })
+            .catch(error => {
+                console.log(error)
+            }),
+        await api.get('/empresas')
+            .then(resp => {
+                let empresa = resp.data.map((item) => {
+                    return {key: item.id, value: item.nome}
+                })
+                setSelectEmpresa(empresa)
+            })
+            .catch(erro => {
+                console.log(erro)
+            })
+    }
 
     useEffect(() => {
         api.get('/empresas')
@@ -111,11 +140,26 @@ export function SMesas() {
                 })
                 .catch(error => {
                     console.log(error)
-                })},
-        [dados]);
+                })},[dados]);
     return (
         <Container>
             <CCabecalhoHome title="Mesas" />
+
+            <Coluna>
+                <InputSearch
+                    placeholder="Pesquisar Mesas..."
+                    placeholderTextColor='white'
+                    autoCapitalize='none'
+                    onChangeText={(text) => {
+                        setSearchMesas(text);
+                        handleSearch({ descricao: text });
+                    }}
+                    value={searchMesas}
+                />
+                <CIconButton iconName='search' color='white' size={30} onPress={() => handleSearch({
+                    id: searchMesas })} />
+            </Coluna>
+
             <Body>
                 <CTable>
 
@@ -198,22 +242,42 @@ export function SMesas() {
 
                     <CTableRow backgroundColor='green' data={["Descrição","Capacidade","Empresa",""]} textStyle={{ color: 'white', fontSize: 18, fontWeight: 'bold', textAlign: 'center' }}/>
 
-                    {Array.isArray(dados) && dados.map((item, index) => (
-                        <CTableRow backgroundColor='white' key={index} textStyle={{ color: 'black', fontSize: 18, fontWeight: 'normal', textAlign: 'center' }}
-                             data={[item.descricao, item.capacidade, item.empresa.nome,
+                    {Array.isArray(filteredData) && filteredData.length > 0
+                        ? filteredData.map((item, index) => (
+                            <CTableRow backgroundColor='white' key={index} textStyle={{ color: 'black', fontSize: 18, fontWeight: 'normal', textAlign: 'center' }}
+                                       data={[item.descricao, item.capacidade, item.empresa.nome,
 
-                                 <CIconButton style={{ alignSelf: 'center' }} marginBottom={15} iconName="edit" color="blue" size={30} onPress={() => {
-                                     setEditMesaId(item.id)
-                                     setDispDescricao(item.descricao)
-                                     setDispCapacidade(item.capacidade)
-                                     setDispEmpresa(item.empresa.nome)
-                                     setEditDescricao(item.descricao)
-                                     setEditCapacidade(item.capacidade.toString())
-                                     setModalVisibleEdit(true)
-                                 }} />
+                                           <CIconButton style={{ alignSelf: 'center' }} marginBottom={15} iconName="edit" color="blue" size={30} onPress={() => {
+                                               setEditMesaId(item.id)
+                                               setDispDescricao(item.descricao)
+                                               setDispCapacidade(item.capacidade)
+                                               setDispEmpresa(item.empresa.nome)
+                                               setEditDescricao(item.descricao)
+                                               setEditCapacidade(item.capacidade.toString())
+                                               setModalVisibleEdit(true)
+                                               setSelected(item.empresa.id)
+                                           }} />
 
-                             ]}
-                        />
+                                       ]}
+                            />
+                        ))
+                        : Array.isArray(dados) && dados.map((item, index) => (
+                            <CTableRow backgroundColor='white' key={index} textStyle={{ color: 'black', fontSize: 18, fontWeight: 'normal', textAlign: 'center' }}
+                                 data={[item.descricao, item.capacidade, item.empresa.nome,
+
+                                     <CIconButton style={{ alignSelf: 'center' }} marginBottom={15} iconName="edit" color="blue" size={30} onPress={() => {
+                                         setEditMesaId(item.id)
+                                         setDispDescricao(item.descricao)
+                                         setDispCapacidade(item.capacidade)
+                                         setDispEmpresa(item.empresa.nome)
+                                         setEditDescricao(item.descricao)
+                                         setEditCapacidade(item.capacidade.toString())
+                                         setModalVisibleEdit(true)
+                                         setSelected(item.empresa.id)
+                                     }} />
+
+                                 ]}
+                            />
                     ))}
                 </CTable>
             </Body>
