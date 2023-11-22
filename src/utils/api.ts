@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: 'http://localhost:3000/',        //SERVER RENDER
+    baseURL: 'https://chapefood-api.onrender.com',        //SERVER RENDER
 })
 
 export default api
