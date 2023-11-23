@@ -13,6 +13,7 @@ interface Props extends TouchableOpacityProps {
     marginLeft?: number
     alignItems?: string
     justifyContent?: string
+    marginBottom?: number
 
 }
 

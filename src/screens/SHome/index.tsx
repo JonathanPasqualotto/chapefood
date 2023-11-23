@@ -24,6 +24,18 @@ export function SHome(){
         navigation.navigate('Relatorios')
     }
 
+    function handleProdutos(){
+        navigation.navigate('Produtos')
+    }
+
+    function handlePedidos() {
+        navigation.navigate('Pedidos')
+    }
+
+    function handleOrdemServico(){
+        navigation.navigate('OrdemServico')
+    }
+
     return (
         <Container>
             <CCabecalhoHome title="CHAPEFOOD" />
@@ -41,8 +53,14 @@ export function SHome(){
                     <MenuItem onPress={handleMesas}>
                         <TextButton>Mesas</TextButton>
                     </MenuItem>
-                    <MenuItem onPress={handleLinha}>
+                    <MenuItem onPress={handleProdutos}>
                         <TextButton>Produtos</TextButton>
+                    </MenuItem>
+                    <MenuItem onPress={handlePedidos}>
+                        <TextButton>Pedidos</TextButton>
+                    </MenuItem>
+                    <MenuItem onPress={handleOrdemServico}>
+                        <TextButton>Ordem de Serviço</TextButton>
                     </MenuItem>
                 </MenuGrid>
             </Body>
