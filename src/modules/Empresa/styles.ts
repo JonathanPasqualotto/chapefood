@@ -5,7 +5,7 @@ import {Platform} from "react-native";
 
 const ios = Platform.OS === 'ios';
 
-export const Container = styled.View`
+export const Container = styled.SafeAreaView`
   flex: 1;
   background-color: #1e1f22;
 `;
