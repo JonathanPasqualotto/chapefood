@@ -1,7 +1,8 @@
 import { NavigationContainer } from "@react-navigation/native";
-import { GerenteRouter } from "./app.routes";
+import { GerenteRouter } from "./gerente.routes";
 import { useAuth } from "../hooks/auth";
 import { AuthRoutes } from "./auth.routes";
+import {AtendenteRoutes} from "./atendente.routes";
 
 export function Routes() {
     const { user } = useAuth()
@@ -14,7 +15,7 @@ export function Routes() {
             case 'Gerente':
                 return <GerenteRouter />;
             case 'Atendente':
-                return <AtendenteRouter />;
+                return <AtendenteRoutes />;
             case 'Cozinheiro':
                 return <CozinheiroRouter />;
             default:

@@ -162,8 +162,6 @@ export function SUsuarios() {
                     }}
                     value={searchUsuario}
                 />
-                <CIconButton iconName='search' color='white' size={30} onPress={() => handleSearch({
-                    nome: searchUsuario })} />
             </Coluna>
 
                 <CTable>
@@ -218,6 +216,7 @@ export function SUsuarios() {
                                             onSelect={() => selected}
                                             label="Cargo"
                                             searchPlaceholder="Pesquisar"
+                                            defaultOption={{key: dispCargo, value: dispCargo }}
                                         />
 
                                         <TextCad>{dispLogin}</TextCad>
