@@ -172,8 +172,6 @@ export function SProdutos() {
                     }}
                     value={searchProduto}
                 />
-                <CIconButton iconName='search' color='white' size={30} onPress={() => handleSearch({
-                    id: searchEmpresa })} />
             </Coluna>
 
             <Body>

@@ -1,8 +1,8 @@
-export default {
-    colors: {
+const theme = {
+    COLORS: {
         header: "#1b1b1f",
 
-        background_primary: "#f4f5f6",
+        BACKGROUND_PRIMARY: "#1e1f22",
         background_secondary: "#ffffff",
 
         text: "#7a7a80",
@@ -17,5 +17,9 @@ export default {
 
         shape: "#e1e1e8",
         shape_dark: "#29292e"
-    },
+    }
 }
+
+export type ThemeType = typeof theme;
+
+export default theme;
