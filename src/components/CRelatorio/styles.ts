@@ -20,7 +20,7 @@ export const Container = styled.TouchableOpacity`
   border-radius: ${ios ? 60 : 60}px;
 `;
 
-export const Title = styled.Text`
+export const Title = styled.Text`    
   color: white;
   font-size: ${RFValue(25)}px;
   font-weight: bold;
