@@ -3,6 +3,7 @@ import {SHome} from '../screens/SHome'
 import {SEmpresa} from "../modules/Empresa";
 import {SUsuarios} from "../modules/Usuarios";
 import {SMesas} from "../modules/Mesas";
+import {SRelatorios} from "../modules/Relatorios";
 import {SProdutos} from "../modules/Produtos";
 import {SPedidos} from "../modules/Pedidos";
 import {SOrdemServico} from "../modules/OrdemServico";
@@ -27,6 +28,10 @@ export function GerenteRouter() {
             <Screen
                 name="Usuarios"
                 component={SUsuarios}
+            />
+            <Screen
+                name="Relatorios"
+                component={SRelatorios}
             />
             <Screen
                 name="Mesas"

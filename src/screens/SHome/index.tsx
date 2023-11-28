@@ -20,6 +20,9 @@ export function SHome(){
     function handleMesas(){
         navigation.navigate('Mesas')
     }
+    function handleRelatorios(){
+        navigation.navigate('Relatorios')
+    }
 
     function handleProdutos(){
         navigation.navigate('Produtos')
@@ -44,7 +47,7 @@ export function SHome(){
                     <MenuItem onPress={handleUsuarios}>
                         <TextButton>Usuários</TextButton>
                     </MenuItem>
-                    <MenuItem onPress={handleLinha}>
+                    <MenuItem onPress={handleRelatorios }>
                         <TextButton>Relatórios</TextButton>
                     </MenuItem>
                     <MenuItem onPress={handleMesas}>
