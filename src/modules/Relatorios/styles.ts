@@ -16,6 +16,13 @@ export const Text = styled.Text`
   font-weight: bold;
 `;
 
+export const Body = styled.ScrollView.attrs({
+  contentContainerStyle: {
+      alignItems: 'center'
+  },
+  showsVerticalScrollIndicator: false
+})``;
+
 export const HeaderModal = styled.View`
   background-color: #757779;
   width: ${ios ? Width*0.9 : Width*0.9 }px;
