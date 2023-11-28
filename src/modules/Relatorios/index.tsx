@@ -50,7 +50,7 @@ export function SRelatorios() {
     
     return (
         <Container>
-            <CCabecalhoHome title="Relatórios" />
+            <CCabecalhoHome title="Relatório" />
             <Body>
                 <CSelectList
                     setSelected={(val: string) => setSelected(val)}
