@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import  { Input, Logo, Input1 } from './styles'
+import  { Input, Logo, InputSenha } from './styles'
 import {CButton} from "../../components/CButton";
 import * as Yup from 'yup'
 import {Alert, KeyboardAvoidingView} from "react-native";
@@ -19,13 +19,13 @@ export default function SLogin(){
         try {
             setIsLoading(true)
 
-            const shema = Yup.object().shape({
+            const schema = Yup.object().shape({
                 usuario: Yup.string()
                     .required(),
                 senha: Yup.string()
                     .required()
             })
-            await shema.validate({usuario, senha})
+            await schema.validate({usuario, senha})
             await AsyncStorage.setItem('@chapefood:usuarioLogado', usuario)
             await AsyncStorage.setItem('@chapefood:senhaLoagdo', senha)
             await signIn({ usuario, senha, cargo })
@@ -54,7 +54,7 @@ export default function SLogin(){
                     value={usuario}
 
                 />
-                <Input1
+                <InputSenha
                     placeholder="Senha"
                     secureTextEntry={true}
                     autoCapitalize='none'
