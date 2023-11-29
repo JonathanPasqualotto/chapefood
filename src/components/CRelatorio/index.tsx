@@ -44,11 +44,12 @@ export function CRelatorio({ registros }: Props) {
     
     if (registros) {
     let nmrPedido: number[] = [];
+    let totalPedido: number[] = [];
     let produtos:produtos[] = [];
     
     registros.registros.forEach((pedido, index) => {
         nmrPedido.push(pedido.numeroPedido);
-
+        totalPedido.push(pedido.totalPedido);
         var produtosArray = pedido.produtos.split(', ');
         var obj = {
         numeroPedido: pedido.numeroPedido,
@@ -66,9 +67,11 @@ export function CRelatorio({ registros }: Props) {
             {pedido.produtos.map((produto, produtoIndex) => (
                 <Text key={produtoIndex} style={[styles.tableRow]}>{produto}</Text>
             ))}
+                <Text key={index} style={[styles.tableFooter]}>Valor pedido: R${totalPedido[index]}</Text>
             </View>
+            
         ))}
-        <Text style={styles.tableFooter}>{`Total: R$ ${registros.totalizador.valor}`}</Text>
+        <Text style={styles.total}>{`Total: R$ ${registros.totalizador.valor}`}</Text>
         </View>
     );
     } else {
@@ -84,20 +87,29 @@ export function CRelatorio({ registros }: Props) {
 
 const styles = StyleSheet.create({
     container: {
-        marginTop: '20%',
-        marginBottom: '30%',
         backgroundColor: 'white',
         color: 'white',
-        paddingEnd: '1%',
-        paddingStart: '1%',
+        marginTop: '20%',
+        marginBottom: '30%',
+        marginEnd: '30%',
+        marginStart: '5%',
         borderWidth: 5,
         borderColor: 'red'
     },
 
     tableHead:{
         padding: 5,
-        backgroundColor: 'white',
-        marginBottom: 5
+        backgroundColor: '#5c5c5c',
+        marginBottom: 5,
+    },
+
+    tableFooter:{
+        padding: 5,
+        backgroundColor: '#c4c4c4',
+        marginBottom: 15,
+        fontSize: 25,
+        fontWeight: 'bold'
+        
     },
 
     tableRow:{
@@ -106,15 +118,16 @@ const styles = StyleSheet.create({
         padding: 5,
         fontSize: 25,
         marginBottom: 5,
-        marginHorizontal: 3
-        
     },
 
-    tableFooter: {
-        
+    total: {
         color: 'black',
-        fontSize: 40,
-        backgroundColor: 'white'
+        fontSize: 50,
+        paddingEnd: '40%',
+        paddingVertical: '5%',
+        textAlign: 'left',
+        backgroundColor: 'white',
+        fontWeight: 'bold'
     },
 
     textEmpty: {

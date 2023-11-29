@@ -50,7 +50,7 @@ export function SRelatorios() {
                 console.warn(error);
             });
     }
-
+    
     return (
         <>
             <CCabecalhoHome title="Relatórios" />
