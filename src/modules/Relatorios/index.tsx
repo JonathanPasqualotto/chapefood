@@ -1,21 +1,12 @@
 import React from "react";
 import { CCabecalhoHome} from "../../components/CCabecalhoHome";
-import {Container, Body, Footer, HeaderModal, Input, Text} from "./styles";
-import {CColumn} from "../../components/CColumn";
-import {CRow} from "../../components/CRow";
-import {CIconButton} from "../../components/CIconButton";
+import {Container, Body, Footer } from "./styles";
 import api from "../../utils/api";
-import {useEffect, useState} from "react";
+import { useState} from "react";
 import { Modal, Alert, FlatList } from "react-native";
-
 import {CRelatorio} from "../../components/CRelatorio";
-import { CTable } from "../../components/CTable";
 import {CSelectList} from "../../components/CSelectList";
 import { CButtonRelatorio } from "../../components/CButonRelatorio";
-
-interface IRelatorio{
-    status: string
-}
 
 enum StatusOptions {
     Aberto = 'Aberto',
@@ -42,6 +33,7 @@ export function SRelatorios() {
         api.get('/pedidos/relatorio' + filtro)
             .then((response) => {
                 setRelatorios(response.data);
+                setSelected('')
             })
             .catch(error => {
                 console.warn(error);
@@ -51,18 +43,21 @@ export function SRelatorios() {
     return (
         <Container>
             <CCabecalhoHome title="Relatório" />
+
+            <CSelectList
+                setSelected={(val: string) => setSelected(val)}
+                data={selectStatus}
+                save="key"
+                onSelect={() => selected}
+                label="Cargo"
+                searchPlaceholder="Pesquisar"
+            />
             <Body>
-                <CSelectList
-                    setSelected={(val: string) => setSelected(val)}
-                    data={selectStatus}
-                    save="key"
-                    onSelect={() => selected}
-                    label="Cargo"
-                    searchPlaceholder="Pesquisar"
-                />
                 <CRelatorio registros={relatorios} />
-                <CButtonRelatorio onPress={gerarRelatorio} title="Carregar relatório" />
             </Body>
+            <Footer>
+                <CButtonRelatorio onPress={gerarRelatorio} title="Carregar relatório" />
+            </Footer>
         </Container>
     );
 }

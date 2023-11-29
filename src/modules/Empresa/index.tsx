@@ -116,8 +116,6 @@ export function SEmpresa() {
                     }}
                     value={searchEmpresa}
                 />
-                <CIconButton iconName='search' color='white' size={30} onPress={() => handleSearch({
-                    nome: searchEmpresa })} />
             </Coluna>
             <CTable>
                 {
@@ -194,7 +192,7 @@ export function SEmpresa() {
                             />
                     ))}
             </CTable>
-
+            <CColumn />
             <Footer>
                 <CIconButton iconName='plus' color='green' size={40} onPress={() => setModalVisibleNew(true)} style={{ height: 80 }}/>
                 {

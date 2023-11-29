@@ -156,8 +156,6 @@ export function SMesas() {
                     }}
                     value={searchMesas}
                 />
-                <CIconButton iconName='search' color='white' size={30} onPress={() => handleSearch({
-                    id: searchMesas })} />
             </Coluna>
 
             <Body>

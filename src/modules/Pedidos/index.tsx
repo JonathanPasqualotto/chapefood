@@ -22,9 +22,9 @@ import {CSelectList} from "../../components/CSelectList";
 
 interface IPedido{
     id: number
-    nomecliente: string
+    nomeCliente: string
     status: StatusOptions
-    pedidosprodutos: any[]
+    pedidosProdutos: any[]
     mesa: number
 }
 
@@ -78,23 +78,23 @@ export function SPedidos() {
 
 
 
-    async function handleNewPedido({ nomecliente, mesa, pedidosprodutos }: IPedido){
-        console.log('nomecliente ',nomecliente)
-        console.log('mesa ',mesa)
-        console.log('pedidosprodutos ',pedidosprodutos)
-        if (nomecliente !== null && mesa !== null && (Array.isArray(listProducts) && listProducts.length !== 0)){
+    async function handleNewPedido({ nomeCliente, mesa, pedidosProdutos }: IPedido){
+        if (mesa !== null && (Array.isArray(pedidosProdutos) && pedidosProdutos.length !== 0)){
             await api.post('/pedidos/gerar', {
-                nomecliente,
+                nomeCliente,
                 mesa,
-                pedidosprodutos: listProducts
+                pedidosProdutos
             })
                 .then(response => {
                     Alert.alert('Cadastro realizado com sucesso', '', [{text: 'OK'}])
                     setModalVisibleNew(false);
                     setNovoNomeCLiente(null)
-                    setNovoStatus(null)
                     setSelected("")
                     setFilteredData([])
+                    setListProducts([]);
+                    setItensGrid([])
+                    setSelectProduto([])
+                    setQuantidade(null)
                 })
                 .catch(error => {
                     console.log(error)
@@ -118,19 +118,16 @@ export function SPedidos() {
         }
     }
 
-    async function handleEditPedido({ id, nomecliente, status }: IPedido) {
-        console.log(status)
+    async function handleEditPedido({ id, nomeCliente, mesa, pedidosProdutos }: IPedido) {
         if (id !== null) {
             await api.patch('/pedidos/' +id.toString(), {
-                nomecliente,
-                status,
+                nomeCliente,
+                mesa,
+                pedidosProdutos
             })
                 .then(response => {
                     Alert.alert('Ajustes realizados com sucesso', '', [{text: 'OK'}])
                     setEditPedidoId(null);
-                    // setEditUsuario(null)
-                    // setEditLogin(null)
-                    // setEditSenha(null)
                     setModalVisibleEdit(false)
                     setSelected("")
                     setFilteredData([])
@@ -142,32 +139,29 @@ export function SPedidos() {
     }
 
     function handleAddPRoduto(){
-        console.log('selectProduto ',selectProduto)
+        if (selectProduto) {
+            const prodSelecionado =  selectedProdutos.find((produto) => produto.value === selectProduto)
 
-        // if (selectProduto) {
-            //const descricao = selectedProdutos.find((produto) => produto.id === selectProduto.id);
-            const descricao =  selectedProdutos.find((produto) => produto.value === selectProduto)
-            console.log('descricao ',descricao)
-            console.log('descricao.key ',descricao.key)
-            console.log('descricao.manufaturado ',descricao.manufaturado)
-
+            // GRID PARA CRIAR
             const addProdutosPedido = {
-                produto: descricao.key,
+                produto: prodSelecionado.key,
                 quantidade: quantidade,
-                status: descricao.manufaturado ? 'Aguardando Produção' : 'Pronto'
+                status: prodSelecionado.manufaturado ? 'Aguardando Produção' : 'Pronto'
             };
 
-            console.log('addProdutosPedido ',addProdutosPedido)
-           // const descricao = selectedProdutos.find((produto) => produto.id === selectProduto.id);
+            // GRID PARA EXIBIR
+            const addProdutosGrid = {
+                produto: selectProduto,
+                quantidade: quantidade
+            }
 
-            if (addProdutosPedido) {
+            if (addProdutosPedido && addProdutosGrid) {
                setListProducts(prevList => [...prevList, addProdutosPedido]);
-               setItensGrid(prevList => [...prevList, addProdutosPedido])
-                console.log(listProducts)
+               setItensGrid(prevList => [...prevList, addProdutosGrid])
                 setSelectProduto('')
                 setQuantidade(null)
             }
-        // }
+        }
     }
 
     async function handleSearch({ status }: IPedido) {
@@ -237,7 +231,6 @@ export function SPedidos() {
         <Container>
             <CCabecalhoHome title="Pedidos" />
             <Body>
-                <Coluna>
                     <CSelectList
                         setSelected={(val) => setSearchStatus(val)}
                         data={selectStatus}
@@ -249,7 +242,6 @@ export function SPedidos() {
                         placeholder='Pesquisar Status Pedido...'
                         defaultOption={{key: 'Aberto', value: 'Aberto'}}
                     />
-                </Coluna>
 
                     {modalVisibleEdit == true
                         ?
@@ -264,9 +256,6 @@ export function SPedidos() {
                                  setDispNomeCLiente(null)
                                  setDispStatus(null)
                                  setDispProdutos(null)
-                                // setEditUsuario(null)
-                                // setEditLogin(null)
-                                // setEditSenha(null)
                                  setSelected("")
                             }}>
                             <CColumn align='center'>
@@ -277,9 +266,6 @@ export function SPedidos() {
                                          setDispNomeCLiente(null)
                                          setDispStatus(null)
                                          setDispProdutos(null)
-                                        // setEditUsuario(null)
-                                        // setEditLogin(null)
-                                        // setEditSenha(null)
                                          setSelected("")
                                     }} />
                                 </CColumn>
@@ -344,8 +330,6 @@ export function SPedidos() {
                                      setEditPedidoId(item.id)
                                      setDispNomeCLiente(item.nomecliente)
                                      setDispStatus(item.status)
-                                    // setEditUsuario(item.nome)
-                                    // setEditLogin(item.login)
                                     setModalVisibleEdit(true)
                                 }} />
                             </Coluna>
@@ -364,8 +348,6 @@ export function SPedidos() {
                                      setEditPedidoId(item.id)
                                      setDispNomeCLiente(item.nomecliente)
                                      setDispStatus(item.status)
-                                    // setEditUsuario(item.nome)
-                                    // setEditLogin(item.login)
                                     setModalVisibleEdit(true)
                                 }} />
                             </Coluna>
@@ -396,8 +378,7 @@ export function SPedidos() {
                                 setListProducts([])
                                 setQuantidade(null)
                                 setSelectProduto([])
-                                // setNovoLogin(null)
-                                // setNovaSenha(null)
+                                setItensGrid([])
                             }}>
                             <CColumn align='center'>
                                 <CColumn align='right' marginLeft={380} marginBottom={1}>
@@ -408,8 +389,7 @@ export function SPedidos() {
                                         setListProducts([])
                                         setQuantidade(null)
                                         setSelectProduto([])
-                                        // setNovoLogin(null)
-                                        // setNovaSenha(null)
+                                        setItensGrid([])
                                     }} />
                                 </CColumn>
                                 <HeaderModal>
@@ -430,7 +410,7 @@ export function SPedidos() {
                                         searchPlaceholder="Pesquisar"
                                         placeholder='Selecione uma mesa...'
                                     />
-                                    <Body styled={{ alignItems: 'cancel' }}>
+                                    <Body style={{ marginTop: 20 }}>
                                         <LinhaProduto>
                                             <Coluna>
                                                 <TextCad>*Produto</TextCad>
@@ -455,21 +435,27 @@ export function SPedidos() {
                                                 />
                                                 <CIconButton iconName='plus' color='blue' size={40} onPress={handleAddPRoduto} />
                                             </Coluna>
-                                            <FlatList
-                                                data={listProducts}
-                                                keyExtractor={(item, index) => index.toString()}
-                                                // keyExtractor={item => item.produto}
-                                                numColumns={2}
-                                                renderItem={({ item }) => {
-                                                    return (
-                                                        <TextGrid key={item.produto}>
-                                                            <TextGrid>{`Produto: ${item.produto}`}</TextGrid>
-                                                            <TextGrid>{`Quantidade: ${item.quantidade}`}</TextGrid>
-                                                            <TextGrid>{`Status: ${item.status}`}</TextGrid>
-                                                        </TextGrid>
-                                                    )
-                                                }}
-                                            />
+                                            {/*<FlatList*/}
+                                            {/*    data={itensGrid}*/}
+                                            {/*    keyExtractor={(item, index) => index.toString()}*/}
+                                            {/*    numColumns={2}*/}
+                                            {/*    renderItem={({ item }) => {*/}
+                                            {/*        return (*/}
+                                            {/*            <TextGrid key={item.produto}>*/}
+                                            {/*                <TextGrid>{`Produto: ${item.produto}`}</TextGrid>*/}
+                                            {/*                <TextGrid>  </TextGrid>*/}
+                                            {/*                <TextGrid>{`Qtd.: ${item.quantidade}`}</TextGrid>*/}
+                                            {/*            </TextGrid>*/}
+                                            {/*        )*/}
+                                            {/*    }}*/}
+                                            {/*/>*/}
+                                            {itensGrid.map((item, index) => (
+                                                <TextGrid key={index}>
+                                                    <TextGrid>{`Produto: ${item.produto}`}</TextGrid>
+                                                    <TextGrid>  </TextGrid>
+                                                    <TextGrid>{`Qtd: ${item.quantidade}`}</TextGrid>
+                                                </TextGrid>
+                                            ))}
                                         </LinhaProduto>
                                     </Body>
                                     <CColumn />
@@ -477,9 +463,9 @@ export function SPedidos() {
                                     <Coluna>
                                         <Text></Text>
                                         <CIconButton iconName='save' color='black' size={40} onPress={() => handleNewPedido({
-                                            nomecliente: novoNomeCLiente,
+                                            nomeCliente: novoNomeCLiente,
                                             mesa: selectedMesa,
-                                            pedidosrodutos: listProducts
+                                            pedidosProdutos: listProducts
                                         })} />
                                     </Coluna>
                                 </HeaderModal>
