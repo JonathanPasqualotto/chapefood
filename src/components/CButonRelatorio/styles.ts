@@ -13,7 +13,7 @@ export const Container = styled.TouchableOpacity`
   background-color: #638d3c;
   margin-top: ${ios ? 15 : 15}px;
   width: ${ios ? Width*0.6 : Width*0.6}px;
-  height: ${ios ? Height*0.08 : Height*0.08};
+  height: ${ios ? Height*0.08 : Height*0.08}px;
   align-items: center;
   justify-content: center;
   border-radius: ${ios ? 60 : 60}px;

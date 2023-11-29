@@ -11,7 +11,7 @@ interface Props{
 interface SingInCredentials{
     usuario: string
     senha: string
-    cargo: string
+    cargo?: string
 }
 
 interface IAuthContextData{

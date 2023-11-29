@@ -1,6 +1,18 @@
 import styled from "styled-components/native";
 import { SelectList } from "react-native-dropdown-select-list/index";
 
-export const Container = styled(SelectList)`
+interface Props{
+    boxStyles?:any
+    dropdownStyles?:any
+    searchPlaceholder?:any
+    placeholder?:any
+    children?:any
+    inputStyles?:any
+    dropdownTextStyles?:any
+    setSelected?:any
+    data?:any
+}
+
+export const Container = styled(SelectList)<Props>`
 
 `;

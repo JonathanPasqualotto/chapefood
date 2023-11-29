@@ -12,14 +12,12 @@ export const Container = styled.SafeAreaView`
 `;
 
 export const LinhaContainer = styled.View`
-    margin-top:  ${ios ? Width*0.03 : Width*0.03};
+    margin-top:  ${ios ? Width*0.03 : Width*0.03}px;
     background-color: #fff;
     border-radius: ${ios ? 60 : 60}px;
-    //align-items: center;
     padding-left: ${ios ? 30 : 30}px;
-    //padding-bottom: ${ios ? 30 : 55}px;
-    width: ${ios ? Width*0.8 : Width*0.8};
-    height: ${ios ? Height*0.23 : Height*0.23};
+    width: ${ios ? Width*0.8 : Width*0.8}px;
+    height: ${ios ? Height*0.23 : Height*0.23}px;
 `;
 
 export const Body = styled.ScrollView.attrs({

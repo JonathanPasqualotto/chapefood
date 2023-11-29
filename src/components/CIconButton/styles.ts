@@ -16,8 +16,8 @@ interface Props {
 }
 
 export const Container = styled(TouchableOpacity)<Props>`
-  height: ${Height*0.05};
-  width: ${Width*0.1};
+  height: ${Height*0.05}px;
+  width: ${Width*0.1}px;
   border-radius: 5px;
   background-color: ${({ backgroundColor }) => backgroundColor ?? ''};
   margin-right: ${({ marginRight }) => marginRight ?? 20}px;
