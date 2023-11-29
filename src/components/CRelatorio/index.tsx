@@ -62,12 +62,9 @@ export function CRelatorio({ title, registros }: Props) {
                     "numeroPedido": pedido.numeroPedido,
                     "produtos": produtosArray
                 }
-                console.log(obj);
                 produtos.push(obj)
             });
             
-            console.log(produtos)
-
             return (
     
                 <View style={styles.container}>
