@@ -8,6 +8,7 @@ import {
     Input,
     Text,
     TextCad,
+    TextGrid,
     InputSearch,
     LinhaContainer,
     Body,
@@ -23,7 +24,7 @@ interface IPedido{
     id: number
     nomecliente: string
     status: StatusOptions
-    produtos: any
+    pedidosprodutos: any[]
     mesa: number
 }
 
@@ -73,15 +74,19 @@ export function SPedidos() {
     const [ selectedMesa, setSelectedMesa ] = useState('')
     const [ selectProduto, setSelectProduto ] = useState([])
     const [ quantidade, setQuantidade ] = useState(null)
+    const [ itensGrid, setItensGrid ] = useState([])
 
 
 
-    async function handleNewPedido({ nomecliente, mesa, produtos }: IPedido){
-        if (nomecliente !== null && mesa !== null && (Array.isArray(produtos) && produtos.length !== 0)){
-            await api.post('/pedidos', {
+    async function handleNewPedido({ nomecliente, mesa, pedidosprodutos }: IPedido){
+        console.log('nomecliente ',nomecliente)
+        console.log('mesa ',mesa)
+        console.log('pedidosprodutos ',pedidosprodutos)
+        if (nomecliente !== null && mesa !== null && (Array.isArray(listProducts) && listProducts.length !== 0)){
+            await api.post('/pedidos/gerar', {
                 nomecliente,
                 mesa,
-                produtos
+                pedidosprodutos: listProducts
             })
                 .then(response => {
                     Alert.alert('Cadastro realizado com sucesso', '', [{text: 'OK'}])
@@ -137,15 +142,32 @@ export function SPedidos() {
     }
 
     function handleAddPRoduto(){
-        if (selectProduto) {
-            const selectedProdutoInfo = selectedProdutos.find((produto) => produto.id === selectProduto.id);
+        console.log('selectProduto ',selectProduto)
 
-            if (selectedProdutoInfo) {
-                setListProducts(prevList => [...prevList, selectProduto]);
+        // if (selectProduto) {
+            //const descricao = selectedProdutos.find((produto) => produto.id === selectProduto.id);
+            const descricao =  selectedProdutos.find((produto) => produto.value === selectProduto)
+            console.log('descricao ',descricao)
+            console.log('descricao.key ',descricao.key)
+            console.log('descricao.manufaturado ',descricao.manufaturado)
+
+            const addProdutosPedido = {
+                produto: descricao.key,
+                quantidade: quantidade,
+                status: descricao.manufaturado ? 'Aguardando Produção' : 'Pronto'
+            };
+
+            console.log('addProdutosPedido ',addProdutosPedido)
+           // const descricao = selectedProdutos.find((produto) => produto.id === selectProduto.id);
+
+            if (addProdutosPedido) {
+               setListProducts(prevList => [...prevList, addProdutosPedido]);
+               setItensGrid(prevList => [...prevList, addProdutosPedido])
                 console.log(listProducts)
-                setSelectProduto(null);
+                setSelectProduto('')
+                setQuantidade(null)
             }
-        }
+        // }
     }
 
     async function handleSearch({ status }: IPedido) {
@@ -202,7 +224,7 @@ export function SPedidos() {
             api.get('/produtos')
                 .then(resp =>{
                     let produtosList = resp.data.map((item) => {
-                        return {key: item.id, value: item.descricao}
+                        return {key: item.id, value: item.descricao, manufaturado: item.manufaturado}
                     })
                     setSelectedProdutos(produtosList)
                 })
@@ -225,6 +247,7 @@ export function SPedidos() {
                         }}
                         searchPlaceholder="Pesquisar Status Pedido..."
                         placeholder='Pesquisar Status Pedido...'
+                        defaultOption={{key: 'Aberto', value: 'Aberto'}}
                     />
                 </Coluna>
 
@@ -321,14 +344,13 @@ export function SPedidos() {
                                      setEditPedidoId(item.id)
                                      setDispNomeCLiente(item.nomecliente)
                                      setDispStatus(item.status)
-                                     setDispProdutos(item.produtos.map(produtoItem => produtoItem.descricao))
                                     // setEditUsuario(item.nome)
                                     // setEditLogin(item.login)
                                     setModalVisibleEdit(true)
                                 }} />
                             </Coluna>
 
-                            <Text>Mesa: {item.mesa.descricao}</Text>
+                            <Text>Mesa: {selectMesa.find(mesa => mesa.key === item.mesa.id)?.value}</Text>
                             <Text>Pedido: {item.nomecliente}</Text>
                             <Text style={{ textAlign: 'center', color: 'red' }}>{item.status}</Text>
 
@@ -342,14 +364,13 @@ export function SPedidos() {
                                      setEditPedidoId(item.id)
                                      setDispNomeCLiente(item.nomecliente)
                                      setDispStatus(item.status)
-                                     setDispProdutos(item.produtos.map(produtoItem => produtoItem.descricao+', '))
                                     // setEditUsuario(item.nome)
                                     // setEditLogin(item.login)
                                     setModalVisibleEdit(true)
                                 }} />
                             </Coluna>
 
-                            <Text>Mesa: {item.mesa.descricao}</Text>
+                            <Text>Mesa: {selectMesa.find(mesa => mesa.key === item.mesa.id)?.value}</Text>
                             <Text>Pedido: {item.nomecliente}</Text>
                             <Text style={{ textAlign: 'center', color: 'red' }}>{item.status}</Text>
 
@@ -372,6 +393,9 @@ export function SPedidos() {
                                 setModalVisibleNew(false);
                                 setNovoNomeCLiente(null)
                                 setNovoStatus(null)
+                                setListProducts([])
+                                setQuantidade(null)
+                                setSelectProduto([])
                                 // setNovoLogin(null)
                                 // setNovaSenha(null)
                             }}>
@@ -381,13 +405,16 @@ export function SPedidos() {
                                         setModalVisibleNew(false)
                                         setNovoNomeCLiente(null)
                                         setNovoStatus(null)
+                                        setListProducts([])
+                                        setQuantidade(null)
+                                        setSelectProduto([])
                                         // setNovoLogin(null)
                                         // setNovaSenha(null)
                                     }} />
                                 </CColumn>
                                 <HeaderModal>
                                     <Text style={{ color: 'white' }}>Cadastrar Pedido</Text>
-                                    <TextCad>*Nome Cliente</TextCad>
+                                    <TextCad>Nome Cliente</TextCad>
                                     <Input
                                         placeholder="Nome cliente"
                                         onChangeText={setNovoNomeCLiente}
@@ -403,47 +430,48 @@ export function SPedidos() {
                                         searchPlaceholder="Pesquisar"
                                         placeholder='Selecione uma mesa...'
                                     />
-                                    <LinhaProduto>
-                                        <TextCad>*Produto</TextCad>
-                                        <Coluna>
-                                            <CSelectList
-                                                setSelected={(val) => setSelectProduto(val)}
-                                                data={selectedProdutos}
-                                                save="value"
-                                                onSelect={() => selectProduto}
-                                                label="Produto"
-                                                searchPlaceholder="Pesquisar"
-                                                placeholder='Selecione um produto...'
+                                    <Body styled={{ alignItems: 'cancel' }}>
+                                        <LinhaProduto>
+                                            <Coluna>
+                                                <TextCad>*Produto</TextCad>
+                                            </Coluna>
+                                            <Coluna>
+                                                <CSelectList
+                                                    setSelected={(val) => setSelectProduto(val)}
+                                                    data={selectedProdutos}
+                                                    save="value"
+                                                    onSelect={() => selectProduto}
+                                                    label="Produto"
+                                                    searchPlaceholder="Pesquisar"
+                                                    placeholder='Selecione um produto...'
+                                                />
+                                            </Coluna>
+                                            <TextCad>*Qtd.</TextCad>
+                                            <Coluna>
+                                                <InputSearch
+                                                    keyboardType='numeric'
+                                                    onChangeText={setQuantidade}
+                                                    value={quantidade}
+                                                />
+                                                <CIconButton iconName='plus' color='blue' size={40} onPress={handleAddPRoduto} />
+                                            </Coluna>
+                                            <FlatList
+                                                data={listProducts}
+                                                keyExtractor={(item, index) => index.toString()}
+                                                // keyExtractor={item => item.produto}
+                                                numColumns={2}
+                                                renderItem={({ item }) => {
+                                                    return (
+                                                        <TextGrid key={item.produto}>
+                                                            <TextGrid>{`Produto: ${item.produto}`}</TextGrid>
+                                                            <TextGrid>{`Quantidade: ${item.quantidade}`}</TextGrid>
+                                                            <TextGrid>{`Status: ${item.status}`}</TextGrid>
+                                                        </TextGrid>
+                                                    )
+                                                }}
                                             />
-                                            <InputSearch
-                                                keyboardType='numeric'
-                                                onChangeText={setQuantidade}
-                                                value={quantidade}
-                                            />
-                                        </Coluna>
-                                        <Coluna>
-                                            <CSelectList
-                                                setSelected={(val) => setSelected(val)}
-                                                data={novoStatus}
-                                                save="key"
-                                                onSelect={() => selected}
-                                                label="Mesa"
-                                                searchPlaceholder="Pesquisar"
-                                                placeholder='Selecione um status...'
-                                            />
-                                            <CIconButton iconName='plus' color='blue' size={40} onPress={handleAddPRoduto} />
-                                        </Coluna>
-                                        <FlatList
-                                            data={listProducts}
-                                            // keyExtractor={(item, index) => index.toString()}
-                                            keyExtractor={item => item.id}
-                                            renderItem={({ item }) => {
-                                                return (
-                                                    <Text key={item.id}>{item}</Text>
-                                                )
-                                            }}
-                                        />
-                                    </LinhaProduto>
+                                        </LinhaProduto>
+                                    </Body>
                                     <CColumn />
 
                                     <Coluna>
@@ -451,7 +479,7 @@ export function SPedidos() {
                                         <CIconButton iconName='save' color='black' size={40} onPress={() => handleNewPedido({
                                             nomecliente: novoNomeCLiente,
                                             mesa: selectedMesa,
-                                            produtos: selected
+                                            pedidosrodutos: listProducts
                                         })} />
                                     </Coluna>
                                 </HeaderModal>
