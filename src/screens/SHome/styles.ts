@@ -39,7 +39,7 @@ export const MenuGrid = styled.View`
 `;
 
 export const MenuItem = styled.TouchableOpacity`
-  height: ${ios ? Height*0.23 : Height*0.23};
+  height: ${ios ? Height*0.23 : Height*0.23}px;
   min-width: ${ios ? Height*0.15 : Height*0.15}px;
   margin: ${ios ? 10 : 10}px;
   border-radius: ${ios ? 20 : 20}px;

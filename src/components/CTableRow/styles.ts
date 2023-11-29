@@ -11,6 +11,8 @@ interface Props{
     marginLeft?: number
     marginBottom?: number
     backgroundColor?: string
+    style?: any
+    children?: any
 }
 
 export const Container = styled(Row)<Props>`

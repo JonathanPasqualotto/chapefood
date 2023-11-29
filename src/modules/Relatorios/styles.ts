@@ -38,7 +38,7 @@ export const Input = styled.TextInput`
   padding: ${ios ? 15 : 10}px ${ios ? 20 : 28}px;
   border: black 1px solid;
   border-radius: ${ios ? 20 : 20}px;
-  width: ${ios ? Width*0.8 : Width*0.5 };
+  width: ${ios ? Width*0.8 : Width*0.5 }px;
   background-color: white;
 `;
 
