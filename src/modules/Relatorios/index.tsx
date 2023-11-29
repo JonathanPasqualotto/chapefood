@@ -6,26 +6,29 @@ import {CRow} from "../../components/CRow";
 import {CIconButton} from "../../components/CIconButton";
 import api from "../../utils/api";
 import {useEffect, useState} from "react";
-import { Modal, Alert, FlatList } from "react-native";
-
-import {CRelatorio} from "../../components/CRelatorio";
-import { CTable } from "../../components/CTable";
+import { Modal, Alert, FlatList, View, StyleSheet} from "react-native";
+import {CRelatorio, iRegistros} from "../../components/CRelatorio";
 import {CSelectList} from "../../components/CSelectList";
 import { CButtonRelatorio } from "../../components/CButonRelatorio";
+
 
 interface IRelatorio{
     status: string
 }
 
-enum StatusOptions {
+export enum StatusOptions {
     Aberto = 'Aberto',
     Encerrado = 'Encerrado',
     Todos = 'Todos',
 }
 
+export type StatusType = {
+    val: string;   
+}
+
 export function SRelatorios() {
-    const [ relatorios, setRelatorios ] = useState([])
-    const [ selected, setSelected ] = useState('')
+    const [ relatorios, setRelatorios ] = useState<iRegistros>()
+    const [ selected, setSelected ] = useState<StatusType | string>('');
     const [selectStatus, setSelectStatus] = useState<StatusOptions[]>([
         StatusOptions.Aberto,
         StatusOptions.Encerrado,
@@ -33,8 +36,8 @@ export function SRelatorios() {
     ]);
 
     var filtro =  '';
-
-    if (selected != '') {
+    
+    if (selected != 'Todos') {
         filtro = '?status='+selected;
     }
 
@@ -47,22 +50,37 @@ export function SRelatorios() {
                 console.warn(error);
             });
     }
-    
+
     return (
-        <Container>
-            <CCabecalhoHome title="Relatório" />
-            <Body>
-                <CSelectList
-                    setSelected={(val: string) => setSelected(val)}
-                    data={selectStatus}
-                    save="key"
-                    onSelect={() => selected}
-                    label="Cargo"
-                    searchPlaceholder="Pesquisar"
-                />
-                <CRelatorio registros={relatorios} />
-                <CButtonRelatorio onPress={gerarRelatorio} title="Carregar relatório" />
-            </Body>
-        </Container>
+        <>
+            <CCabecalhoHome title="Relatórios" />
+            <View style={styles.container}>
+                    <View>
+                        <CSelectList
+                            setSelected={(val:StatusType) => setSelected(val)}
+                            data={selectStatus}
+                            save="key"
+                            onSelect={() => selected}
+                            label="Cargo"
+                            searchPlaceholder="Pesquisar"
+                        />
+                    </View>
+                <CRelatorio registros={relatorios}  />
+                <CButtonRelatorio onPress={gerarRelatorio} title="Carregar" />
+                
+            </View>
+        </>
+        
     );
+    
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 2,
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        backgroundColor: '#1e1f22'
+    },
+
+})

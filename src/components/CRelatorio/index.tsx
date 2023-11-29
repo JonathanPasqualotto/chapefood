@@ -6,93 +6,126 @@ import { CColumn } from "../CColumn";
 import { Coluna } from "../../modules/Empresa/styles";
 import {StyleSheet, Text, View} from 'react-native';
 
-interface Registros {
-    quantidadeRegistros:number,
-    registros:[{
-        capacidade:number,
-        mesa:string,
-        nomeEmpresa:string,
-        nomeCliente:string,
-        numeroPedido:number,
-        produtos:string
-        statusPedido:string,
-        totalPedido:number
-    }],
-    totalizador: {
-        descricao:string,
-        valor:number
-    }
-};
+export interface iPedido{
+    capacidade:number,
+    mesa:string,
+    nomeEmpresa:string,
+    nomeCliente:string,
+    numeroPedido:number,
+    produtos:string,
+    statusPedido:string,
+    totalPedido:number
+}
+
+export interface iTotalizador {
+    descricao: string;
+    valor: number;
+}
+
+export type iRegistros = {
+    quantidadeRegistros: number;
+    registros: iPedido[];
+    totalizador: iTotalizador;
+} 
+
+type produtos = {
+    numeroPedido: number,
+    produtos: string[]
+}
 
 interface Props extends TouchableOpacityProps{
-    title?: string;
-    registros:Registros;
+    registros?:iRegistros;
+    
 };
 
-const styles = StyleSheet.create({
-    container: {
-      marginTop: '30%',
-      marginBottom: '30%',
-      backgroundColor: 'white',
-      color: 'white',
-      paddingEnd: '5%',
-      paddingStart: '5%',
-      borderWidth: 5,
-      borderColor: 'red'
-    },
 
-    text: {
-        margin: 50,
-        fontSize: 55,
-    }
-  })
 
-export function CRelatorio({ title, registros }: Props) {
-    try {
-        if (Object.keys(registros).length > 0) {
-            
-            let nmrPedido:number[] =  [];
-            let produtos:any[] = [];
-            
+export function CRelatorio({ registros }: Props) {
     
-            registros.registros.forEach((pedido, index) => {
-                nmrPedido.push(pedido.numeroPedido);
-                var produtosArray = pedido.produtos.split(','); 
-                var obj = {
-                    "numeroPedido": pedido.numeroPedido,
-                    "produtos": produtosArray
-                }
-                console.log(obj);
-                produtos.push(obj)
-            });
-            
-            console.log(produtos)
-
-            return (
+    if (registros) {
+    let nmrPedido: number[] = [];
+    let produtos:produtos[] = [];
     
-                <View style={styles.container}>
-                    <Table borderStyle={{ borderWidth: 2, borderColor: "#c8e1ff" }}>
-                        {nmrPedido.map((numero, index) => (
-                            <Text key={index} style={styles.text}>`Pedido Nº {numero}`</Text>
-                        ))}
-                        <Text style={styles.text}>`Total: R$ {registros.totalizador.valor}`</Text>
-                    </Table>
-                </View>
-                
-            );
+    registros.registros.forEach((pedido, index) => {
+        nmrPedido.push(pedido.numeroPedido);
 
-        } else {
-            return(
-                <>
-                    <View>
-                        <Text></Text>
-                    </View>
-                </>
-            ) 
-        }
-    } catch (error) {
-      console.error("erro");
+        var produtosArray = pedido.produtos.split(', ');
+        var obj = {
+        numeroPedido: pedido.numeroPedido,
+        produtos: produtosArray,
+        };
+
+        produtos.push(obj);
+    });
+
+    return (
+        <View>
+        {produtos.map((pedido, index) => (
+            <View key={index}>
+            <Text style={[styles.text, styles.tableHead]}>{`Pedido nº ${pedido.numeroPedido}`}</Text>
+            {pedido.produtos.map((produto, produtoIndex) => (
+                <Text key={produtoIndex} style={[styles.tableRow]}>{produto}</Text>
+            ))}
+            </View>
+        ))}
+        <Text style={styles.tableFooter}>{`Total: R$ ${registros.totalizador.valor}`}</Text>
+        </View>
+    );
+    } else {
+    return (
+        <>
+        <View>
+            <Text style={styles.textEmpty}>Nenhuma informação carregada</Text>
+        </View>
+        </>
+    );
     }
   }
 
- 
+const styles = StyleSheet.create({
+    container: {
+        marginTop: '20%',
+        marginBottom: '30%',
+        backgroundColor: 'white',
+        color: 'white',
+        paddingEnd: '1%',
+        paddingStart: '1%',
+        borderWidth: 5,
+        borderColor: 'red'
+    },
+
+    tableHead:{
+        padding: 5,
+        backgroundColor: 'white',
+        marginBottom: 5
+    },
+
+    tableRow:{
+        textAlign: 'center',
+        backgroundColor: 'gray',
+        padding: 5,
+        fontSize: 25,
+        marginBottom: 5,
+        marginHorizontal: 3
+        
+    },
+
+    tableFooter: {
+        
+        color: 'black',
+        fontSize: 40,
+        backgroundColor: 'white'
+    },
+
+    textEmpty: {
+        color: 'white',
+        fontSize: 20,
+        marginTop: '2%',
+        marginBottom: '2%',
+    },
+
+    text: {
+        color: 'black',
+        fontSize: 33,
+    }
+})

@@ -18,6 +18,7 @@ export const Text = styled.Text`
 
 export const Body = styled.ScrollView.attrs({
   contentContainerStyle: {
+      backgroundColor: '#1e1f22',
       alignItems: 'center'
   },
   showsVerticalScrollIndicator: false
