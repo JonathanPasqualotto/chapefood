@@ -1,8 +1,10 @@
-import { Table } from "react-native-table-component";
-import { Container, Text } from "./styles";
+import { Table, Row} from "react-native-table-component";
+import { Container, Title} from "./styles";
 import {TouchableOpacityProps} from "react-native";
 import React from "react";
-import {View, StyleSheet} from 'react-native';
+import { CColumn } from "../CColumn";
+import { Coluna } from "../../modules/Empresa/styles";
+import {StyleSheet, Text, View} from 'react-native';
 
 export interface iPedido{
     capacidade:number,
@@ -36,6 +38,8 @@ interface Props extends TouchableOpacityProps{
     
 };
 
+
+
 export function CRelatorio({ registros }: Props) {
     
     if (registros) {
@@ -48,8 +52,8 @@ export function CRelatorio({ registros }: Props) {
         totalPedido.push(pedido.totalPedido);
         var produtosArray = pedido.produtos.split(', ');
         var obj = {
-            numeroPedido: pedido.numeroPedido,
-            produtos: produtosArray,
+        numeroPedido: pedido.numeroPedido,
+        produtos: produtosArray,
         };
 
         produtos.push(obj);
@@ -67,7 +71,7 @@ export function CRelatorio({ registros }: Props) {
             </View>
             
         ))}
-        <Text style={styles.total}>{`Total: R$ ${registros.totalizador.valor}`}</Text>
+        <Text style={styles.total}>{`Total: R$${(registros.totalizador.valor).toFixed(2)}`}</Text>
         </View>
     );
     } else {
@@ -80,7 +84,6 @@ export function CRelatorio({ registros }: Props) {
     );
     }
   }
-
 
 const styles = StyleSheet.create({
     container: {
