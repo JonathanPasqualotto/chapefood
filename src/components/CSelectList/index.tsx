@@ -3,15 +3,14 @@ import {Container} from "./styles";
 import { StatusOptions, StatusType } from "../../modules/Relatorios";
 
 interface Props{
-    children?: any,
-    searchPlaceholder?: string,
-    placeholder?: string,
-    setSelected?: (val: StatusType) => void,
-    data: StatusOptions[],
-    save: string,
-    onSelect: {},
-    label: string,
-    
+  children?: any
+  searchPlaceholder?: string
+  placeholder?: string
+  setSelected?: any
+  data?: any
+  save?: string
+  onSelect?: any
+  label?: string  
 }
 
 export function CSelectList({ children, searchPlaceholder, placeholder, ...rest }: Props){

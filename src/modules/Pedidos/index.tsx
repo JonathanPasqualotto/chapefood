@@ -67,7 +67,7 @@ export function SPedidos() {
 
     // VARIAVEIS PARA CRIAÇÃO
     const [ novoNomeCLiente, setNovoNomeCLiente ] = useState(null)
-    const [ novoStatus, setNovoStatus ] = useState<StatusOptions[]>([
+    const [ novoStatus, setNovoStatus ] = useState<StatusOptions[] | undefined>([
         StatusOptions.Aberto,
         StatusOptions.Encerrado,
     ]);
@@ -89,6 +89,7 @@ export function SPedidos() {
                     Alert.alert('Cadastro realizado com sucesso', '', [{text: 'OK'}])
                     setModalVisibleNew(false);
                     setNovoNomeCLiente(null)
+                    setNovoStatus(null)
                     setSelected("")
                     setFilteredData([])
                     setListProducts([]);
@@ -140,26 +141,12 @@ export function SPedidos() {
 
     function handleAddPRoduto(){
         if (selectProduto) {
-            const prodSelecionado =  selectedProdutos.find((produto) => produto.value === selectProduto)
+            const selectedProdutoInfo = selectedProdutos.find((produto) => produto.id === selectProduto.id);
 
-            // GRID PARA CRIAR
-            const addProdutosPedido = {
-                produto: prodSelecionado.key,
-                quantidade: quantidade,
-                status: prodSelecionado.manufaturado ? 'Aguardando Produção' : 'Pronto'
-            };
-
-            // GRID PARA EXIBIR
-            const addProdutosGrid = {
-                produto: selectProduto,
-                quantidade: quantidade
-            }
-
-            if (addProdutosPedido && addProdutosGrid) {
-               setListProducts(prevList => [...prevList, addProdutosPedido]);
-               setItensGrid(prevList => [...prevList, addProdutosGrid])
-                setSelectProduto('')
-                setQuantidade(null)
+            if (selectedProdutoInfo) {
+                setListProducts(prevList => [...prevList, selectProduto]);
+                console.log(listProducts)
+                setSelectProduto(null);
             }
         }
     }
