@@ -42,15 +42,21 @@ export function CRelatorio({ registros }: Props) {
         let nmrPedido: number[] = [];
         let totalPedido: number[] = [];
         let produtos:produtos[] = [];
+        let empresas:string[] = [];
 
         registros.registros.forEach((pedido, index) => {
             nmrPedido.push(pedido.numeroPedido);
             totalPedido.push(pedido.totalPedido);
-            var produtosArray = pedido.produtos.split(', ');
-            var obj = {
-            numeroPedido: pedido.numeroPedido,
-            produtos: produtosArray,
+
+            let produtosArray = pedido.produtos.split(', ');
+            let obj = {
+                numeroPedido: pedido.numeroPedido,
+                produtos: produtosArray,
             };
+
+            empresas.push(pedido.nomeEmpresa);
+
+
 
             produtos.push(obj);
     });
@@ -63,7 +69,7 @@ export function CRelatorio({ registros }: Props) {
                 {pedido.produtos.map((produto, produtoIndex) => (
                     <TableRow key={produtoIndex}>{produto}</TableRow>
                 ))}
-                    <TableFooter key={index} >Valor pedido: R${totalPedido[index]}</TableFooter>
+                    <TableFooter key={index} >R${totalPedido[index]} - {empresas[index]}</TableFooter>
                 </Body>
             ))}
             <Total>Total: R${(registros.totalizador.valor).toFixed(2)}</Total>
