@@ -50,22 +50,26 @@ export function SRelatorios() {
     
     return (
         <>
-            <CCabecalhoHome title="Relatórios" />
-            <View style={styles.container}>
-                    <View>
-                        <CSelectList
-                            setSelected={(val:StatusType) => setSelected(val)}
-                            data={selectStatus}
-                            save="key"
-                            onSelect={() => selected}
-                            label="Cargo"
-                            searchPlaceholder="Pesquisar"
-                        />
-                    </View>
-                <CRelatorio registros={relatorios}  />
-                <CButtonRelatorio onPress={gerarRelatorio} title="Carregar" />
-                
-            </View>
+            <Container>
+                <CCabecalhoHome title="Relatórios" />
+                <View style={styles.container}>
+                        <View>
+                            <CSelectList
+                                setSelected={(val:StatusType) => setSelected(val)}
+                                data={selectStatus}
+                                save="key"
+                                onSelect={() => selected}
+                                label="Cargo"
+                                searchPlaceholder="Pesquisar"
+                            />
+                        </View>
+                    <Body>
+                        <CRelatorio registros={relatorios}  />
+                    </Body>
+                    <CButtonRelatorio onPress={gerarRelatorio} title="Carregar" />
+
+                </View>
+            </Container>
         </>
         
     );

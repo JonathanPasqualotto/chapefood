@@ -5,24 +5,14 @@ import {Height, Width} from "../../utils/dimensions";
 
 const ios = Platform.OS === 'ios';
 
-interface Props extends TouchableOpacityProps{
-   // color?: string;
-}
-
-/* margin-top: ${ios ? 15 : 15}px;*/
-/*width: ${ios ? Width*0.6 : Width*0.6}px;*/
-/*height: ${ios ? Height*0.08 : Height*0.08};*/
-/*align-items: center;*/
-/*justify-content: center;*/
-/*border-radius: ${ios ? 60 : 60}px;*/
-
-export const Container = styled.View`
-  background-color: white;
-  margin-top: 30%;
+export const Container = styled.SafeAreaView`
+  margin-top: 10%;
   margin-bottom: 30%;
   color: white;
-  border-width: 5px;
-  border-color: red;
+`;
+
+export const Body = styled.ScrollView`
+
 `;
 
 export const Title = styled.Text`    
@@ -34,4 +24,52 @@ export const Title = styled.Text`
 export const Text = styled.Text`
   margin: 50px;
   font-size: ${RFValue(25)}px;
+`;
+
+export const TableHead = styled.Text`
+  padding: 5px;
+  background-color: #5c5c5c;
+  margin-bottom: 5px;
+  color: black;
+  font-size: ${RFValue(33)}px;
+`;
+
+export const TableFooter = styled.Text`
+  padding: 5px;
+  background-color: #c4c4c4;
+  marginBottom: 15px;
+  font-size: ${RFValue(20)}px;
+  fontWeight: bold;
+`;
+
+export const TextEmpty = styled.Text`
+  color: white;
+  font-size: ${RFValue(20)}px;
+  margin-top: 2%;
+  margin-bottom: 2%;
+`;
+
+export const TableRow = styled.Text`
+  text-align: center;
+  background-color: gray;
+  padding: 5px;
+  font-size: ${RFValue(25)}px;
+  margin-bottom: 5px;
+`;
+
+export const Total = styled.Text`
+  color: black;
+  font-size: ${RFValue(30)}px;
+  padding-right: 40%;
+  padding-top: 5%;
+  padding-bottom: 5%;
+  text-align: left;
+  background-color: white;
+  font-weight: bold;
+`;
+
+export const Footer = styled.View`
+  align-items: center;
+  justify-content: center;
+  padding-right: ${ios ? 20 : 20}px;
 `;
