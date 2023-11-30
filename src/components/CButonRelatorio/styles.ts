@@ -10,18 +10,17 @@ interface Props extends TouchableOpacityProps{
 }
 
 export const Container = styled.TouchableOpacity`
-  background-color: #638d3c;
-  margin-top: ${ios ? 15 : 15}px;
+
+  background-color: white;
   width: ${ios ? Width*0.6 : Width*0.6}px;
   height: ${ios ? Height*0.08 : Height*0.08}px;
   align-items: center;
   justify-content: center;
-  border-radius: ${ios ? 60 : 60}px;
-  margin-bottom: ${ios ? 0 : 20}px;
+  border-radius: 5px;
 `;
 
 export const Title = styled.Text`
-  color: white;
+  color: black;
   font-size: ${RFValue(25)}px;
   font-weight: bold;
 `;
