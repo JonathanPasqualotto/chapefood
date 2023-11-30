@@ -140,14 +140,30 @@ export function SPedidos() {
     }
 
     function handleAddPRoduto(){
-        if (selectProduto) {
-            const selectedProdutoInfo = selectedProdutos.find((produto) => produto.id === selectProduto.id);
 
-            if (selectedProdutoInfo) {
-                setListProducts(prevList => [...prevList, selectProduto]);
-                console.log(listProducts)
-                setSelectProduto(null);
+        if (selectProduto) {
+            const prodSelecionado =  selectedProdutos.find((produto) => produto.value === selectProduto)
+
+            // GRID PARA CRIAR
+            const addProdutosPedido = {
+                produto: prodSelecionado.key,
+                quantidade: quantidade,
+                status: prodSelecionado.manufaturado ? 'Aguardando Produção' : 'Pronto'
+            };
+
+            // GRID PARA EXIBIR
+            const addProdutosGrid = {
+                produto: selectProduto,
+                quantidade: quantidade,
+                status: prodSelecionado.manufaturado ? 'Aguardando Produção' : 'Pronto'
             }
+
+                if (addProdutosPedido && addProdutosGrid) {
+                    setListProducts(prevList => [...prevList, addProdutosPedido]);
+                    setItensGrid(prevList => [...prevList, addProdutosGrid])
+                    setSelectProduto('')
+                    setQuantidade(null)
+                }
         }
     }
 
@@ -422,25 +438,13 @@ export function SPedidos() {
                                                 />
                                                 <CIconButton iconName='plus' color='blue' size={40} onPress={handleAddPRoduto} />
                                             </Coluna>
-                                            {/*<FlatList*/}
-                                            {/*    data={itensGrid}*/}
-                                            {/*    keyExtractor={(item, index) => index.toString()}*/}
-                                            {/*    numColumns={2}*/}
-                                            {/*    renderItem={({ item }) => {*/}
-                                            {/*        return (*/}
-                                            {/*            <TextGrid key={item.produto}>*/}
-                                            {/*                <TextGrid>{`Produto: ${item.produto}`}</TextGrid>*/}
-                                            {/*                <TextGrid>  </TextGrid>*/}
-                                            {/*                <TextGrid>{`Qtd.: ${item.quantidade}`}</TextGrid>*/}
-                                            {/*            </TextGrid>*/}
-                                            {/*        )*/}
-                                            {/*    }}*/}
-                                            {/*/>*/}
                                             {itensGrid.map((item, index) => (
                                                 <TextGrid key={index}>
                                                     <TextGrid>{`Produto: ${item.produto}`}</TextGrid>
                                                     <TextGrid>  </TextGrid>
                                                     <TextGrid>{`Qtd: ${item.quantidade}`}</TextGrid>
+                                                    <TextGrid>  </TextGrid>
+                                                    <TextGrid>{`Status: ${item.status}`}</TextGrid>
                                                 </TextGrid>
                                             ))}
                                         </LinhaProduto>
