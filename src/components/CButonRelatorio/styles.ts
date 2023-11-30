@@ -13,11 +13,10 @@ export const Container = styled.TouchableOpacity`
 
   background-color: white;
   width: ${ios ? Width*0.6 : Width*0.6}px;
-  height: ${ios ? Height*0.08 : Height*0.08};
+  height: ${ios ? Height*0.08 : Height*0.08}px;
   align-items: center;
   justify-content: center;
   border-radius: 5px;
-  
 `;
 
 export const Title = styled.Text`

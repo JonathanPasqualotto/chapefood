@@ -23,7 +23,8 @@ export function CSelectList({ children, searchPlaceholder, placeholder, ...rest 
             boxStyles={{ backgroundColor: 'white', marginTop: 20 }}
             dropdownStyles={{ backgroundColor: 'white' }}
             dropdownTextStyles={{ fontSize: 20 }}
-            {...rest}>
+            {...rest}
+            >
             {children}
         </Container>
     )

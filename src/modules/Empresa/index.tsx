@@ -8,38 +8,33 @@ import {useEffect, useState} from "react";
 import { Modal, Alert } from "react-native";
 import {CTable} from "../../components/CTable";
 import {CTableRow} from "../../components/CTableRow";
-
-
-interface IEmpresa{
-    id: number
-    nome: string
-}
+import { IEmpresa } from "./interfaces/IEmpresa";
 
 export function SEmpresa() {
-    const [ dados, setDados ] = useState([])
+    const [ dados, setDados ] = useState<Array<IEmpresa>>([])
     const [ modalVisibleEdit, setModalVisibleEdit] = useState(false)
     const [ modalVisibleNew, setModalVisibleNew ] = useState(false)
-    const [ searchEmpresa, setSearchEmpresa ] = useState(null)
-    const [ filteredData, setFilteredData ] = useState([]);
+    const [ searchEmpresa, setSearchEmpresa ] = useState('')
+    const [ filteredData, setFilteredData ] = useState<Array<IEmpresa>>([]);
 
     // VARIAVEIS DE EDITÇÃO
-    const [ editEmpresa, setEditEmpresa] = useState(null)
-    const [ editEmpresaId, setEditEmpresaId] = useState(null)
+    const [ editEmpresa, setEditEmpresa] = useState('')
+    const [ editEmpresaId, setEditEmpresaId] = useState<number | undefined>(0)
 
     // VARIAVEIS PARA EXIBIR
-    const [ dispEmpresa, setDispEmpresa] = useState(null)
+    const [ dispEmpresa, setDispEmpresa] = useState<string | undefined>('')
 
     // VARIAVEIS PARA CRIAÇÃO
-    const [ novaEmpresa, setNovaEmpresa ] = useState(null)
+    const [ novaEmpresa, setNovaEmpresa ] = useState('')
 
     function handleDeleteEmpresa({ id }: IEmpresa) {
         if (id !== null) {
             Alert.alert('Deseja excluir o item selecionado?', '', [{text: 'Não'}, {text: 'Sim', onPress: async () => {
                 await api.delete('/empresas/' + id)
                     .then(resp =>{
-                        setEditEmpresaId(null)
+                        setEditEmpresaId(undefined)
                         setModalVisibleEdit(false)
-                        handleSearch({ id: '' })
+                        setSearchEmpresa('');
                         setFilteredData([])
                     })
                 }}])
@@ -53,10 +48,10 @@ export function SEmpresa() {
             })
                 .then(response => {
                     Alert.alert('Ajustes realizados com sucesso', '', [{text: 'OK'}])
-                    setEditEmpresaId(null)
-                    setEditEmpresa(null)
+                    setEditEmpresaId(undefined)
+                    setEditEmpresa('')
                     setModalVisibleEdit(false)
-                    handleSearch({ id: '' })
+                    setSearchEmpresa('');
                     setFilteredData([])
                 })
                 .catch(error => {
@@ -73,8 +68,8 @@ export function SEmpresa() {
                 .then(response => {
                     Alert.alert('Cadastro realizado com sucesso', '', [{text: 'OK'}])
                     setModalVisibleNew(false);
-                    setNovaEmpresa(null)
-                    handleSearch({ id: '' })
+                    setNovaEmpresa('')
+                    setSearchEmpresa('');
                     setFilteredData([])
                 })
                 .catch(error => {
@@ -89,7 +84,8 @@ export function SEmpresa() {
     async function handleSearch({ nome }: IEmpresa) {
         await api.get('/empresas')
             .then(response => {
-                const filteredResults = response.data.filter(item => item.nome.toLowerCase().includes(nome.toLowerCase()));
+                const data: IEmpresa[] = response.data
+                const filteredResults = data.filter(item=> item.nome!.toLowerCase().includes(nome!.toLowerCase()));
                 setFilteredData(filteredResults);
             })
             .catch(error => {
@@ -109,10 +105,7 @@ export function SEmpresa() {
 
     return (
         <Container>
-
-
-            <CCabecalhoHome title='Empresa' />
-
+            <CCabecalhoHome title='Empresas' />
             <Coluna>
                 <InputSearch
                     placeholder="Pesquisar Empresa..."
@@ -123,33 +116,28 @@ export function SEmpresa() {
                     }}
                     value={searchEmpresa}
                 />
-                <CIconButton iconName='search' color='white' size={30} onPress={() => handleSearch({
-                    id: searchEmpresa })} />
             </Coluna>
-
             <CTable>
-
                 {
                     modalVisibleEdit == true
                         ?
-                        // MODAL DE EDIÇÃO
                         <Modal
                             animationType="none"
                             transparent={true}
                             visible={modalVisibleEdit}
                             onRequestClose={() => {
                                 setModalVisibleEdit(false);
-                                setEditEmpresaId(null);
-                                setDispEmpresa(null)
-                                setEditEmpresa(null)
+                                setEditEmpresaId(0);
+                                setDispEmpresa('')
+                                setEditEmpresa('')
                             }}>
                             <CColumn align='center'>
                                 <CColumn align='right' marginLeft={380} marginBottom={1}>
                                     <CIconButton marginLeft={180} iconName='close' color='red' size={40} onPress={() => {
                                         setModalVisibleEdit(false)
-                                        setEditEmpresaId(null)
-                                        setDispEmpresa(null)
-                                        setEditEmpresa(null)
+                                        setEditEmpresaId(undefined)
+                                        setDispEmpresa('')
+                                        setEditEmpresa('')
                                     }} />
                                 </CColumn>
                                 <HeaderModal>
@@ -157,66 +145,56 @@ export function SEmpresa() {
                                     <Input
                                         placeholder="Nome"
                                         autoCapitalize='none'
-                                        onChangeText={setEditEmpresa}
+                                        onChangeText={(text:string) => setEditEmpresa(text)}
                                         value={editEmpresa}
                                     />
-                                    <CColumn />
-
                                     <Coluna>
-                                        <CIconButton iconName="trash" color="red" size={50} onPress={() => handleDeleteEmpresa({ id: editEmpresaId })} />
+                                        <CIconButton iconName="trash" color="red" size={40} onPress={() => handleDeleteEmpresa({ id: editEmpresaId ? editEmpresaId : undefined })} />
 
-                                        <CIconButton iconName='save' color='black' size={50} onPress={() => handleEditEmpresa({
-                                            id: editEmpresaId,
-                                            nome: editEmpresa})} />
+                                        <CIconButton iconName='save' color='black' size={40} onPress={() => handleEditEmpresa({
+                                            id: editEmpresaId ? editEmpresaId : undefined,
+                                            nome: editEmpresa ? editEmpresa : undefined})} />
                                     </Coluna>
                                 </HeaderModal>
                             </CColumn>
                         </Modal>
-                        // FIM MODAL EDIÇÃO
                         :
                         <></>
                 }
 
-                <CTableRow backgroundColor='green' data={["Nome",""]} textStyle={{ color: 'white', fontSize: 18, fontWeight: 'bold', textAlign: 'center' }} />
+                <CTableRow backgroundColor='green' data={["Nome",""]} textStyle={[{ color: 'white', fontSize: 18, fontWeight: 'bold', textAlign: 'center' }]} />
                     {Array.isArray(filteredData) && filteredData.length > 0
                         ? filteredData.map((item, index) => (
-                            <CTableRow backgroundColor='white' key={index} textStyle={{ color: 'black', fontSize: 18, fontWeight: 'normal', textAlign: 'center' }}
+                            <CTableRow backgroundColor='white' key={index} textStyle={[{ color: 'black', fontSize: 18, fontWeight: 'normal', textAlign: 'center' }]}
                                        data={[item.nome,
 
                                            <CIconButton style={{ alignSelf: 'center' }} marginBottom={15} iconName="edit" color="blue" size={30} onPress={() => {
                                                setEditEmpresaId(item.id)
                                                setDispEmpresa(item.nome)
                                                setModalVisibleEdit(true)
-                                               setEditEmpresa(null)
-
+                                               setEditEmpresa('')
                                            }} />
 
                                        ]}
                             />
                         ))
                         : Array.isArray(dados) && dados.map((item, index) => (
-                            <CTableRow backgroundColor='white' key={index} textStyle={{ color: 'black', fontSize: 18, fontWeight: 'normal', textAlign: 'center' }}
+                            <CTableRow backgroundColor='white' key={index} textStyle={[{ color: 'black', fontSize: 18, fontWeight: 'normal', textAlign: 'center' }]}
                                data={[item.nome,
-
                                    <CIconButton style={{ alignSelf: 'center' }} marginBottom={15} iconName="edit" color="blue" size={30} onPress={() => {
                                        setEditEmpresaId(item.id)
                                        setDispEmpresa(item.nome)
                                        setModalVisibleEdit(true)
-                                       setEditEmpresa(null)
-
+                                       setEditEmpresa('')
                                    }} />
 
                                ]}
                             />
                     ))}
             </CTable>
-
             <CColumn />
-
             <Footer>
-                <CIconButton iconName='plus' color='green' size={60} onPress={() => setModalVisibleNew(true)} style={{ height: 80 }}/>
-
-
+                <CIconButton iconName='plus' color='green' size={40} onPress={() => setModalVisibleNew(true)} style={{ height: 80 }}/>
                 {
                     modalVisibleNew == true
                     ?
@@ -227,13 +205,13 @@ export function SEmpresa() {
                             visible={modalVisibleNew}
                             onRequestClose={() => {
                                 setModalVisibleNew(false);
-                                setNovaEmpresa(null)
+                                setNovaEmpresa('')
                             }}>
                             <CColumn align='center'>
                                 <CColumn align='right' marginLeft={380} marginBottom={1}>
                                     <CIconButton marginLeft={180} iconName='close' color='red' size={40} onPress={() => {
                                         setModalVisibleNew(false);
-                                        setNovaEmpresa(null)
+                                        setNovaEmpresa('')
                                     }} />
                                 </CColumn>
                                 <HeaderModal>
@@ -245,9 +223,6 @@ export function SEmpresa() {
                                         onChangeText={setNovaEmpresa}
                                         value={novaEmpresa}
                                     />
-
-                                    <CColumn />
-
                                     <Coluna>
                                         <Text></Text>
                                         <CIconButton iconName='save' color='black' size={40} onPress={() => {handleNewEmpresa({ nome: novaEmpresa})}} />

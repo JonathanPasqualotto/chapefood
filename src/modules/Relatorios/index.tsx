@@ -1,16 +1,12 @@
 import React from "react";
 import { CCabecalhoHome} from "../../components/CCabecalhoHome";
-import {Container, Body, Footer, HeaderModal, Input, Text} from "./styles";
-import {CColumn} from "../../components/CColumn";
-import {CRow} from "../../components/CRow";
-import {CIconButton} from "../../components/CIconButton";
+import {Container, Body, Footer } from "./styles";
 import api from "../../utils/api";
-import {useEffect, useState} from "react";
-import { Modal, Alert, FlatList, View, StyleSheet} from "react-native";
+import {useState} from "react";
+import {View, StyleSheet} from "react-native";
 import {CRelatorio, iRegistros} from "../../components/CRelatorio";
 import {CSelectList} from "../../components/CSelectList";
 import { CButtonRelatorio } from "../../components/CButonRelatorio";
-
 
 interface IRelatorio{
     status: string
@@ -45,6 +41,7 @@ export function SRelatorios() {
         api.get('/pedidos/relatorio' + filtro)
             .then((response) => {
                 setRelatorios(response.data);
+                setSelected('')
             })
             .catch(error => {
                 console.warn(error);
