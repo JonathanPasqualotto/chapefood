@@ -9,19 +9,29 @@ interface Props extends TouchableOpacityProps{
    // color?: string;
 }
 
-export const Container = styled.TouchableOpacity`
-  background-color: #638d3c;
-  margin-top: ${ios ? 15 : 15}px;
-  margin: 70%;
-  width: ${ios ? Width*0.6 : Width*0.6}px;
-  height: ${ios ? Height*0.08 : Height*0.08};
-  align-items: center;
-  justify-content: center;
-  border-radius: ${ios ? 60 : 60}px;
+/* margin-top: ${ios ? 15 : 15}px;*/
+/*width: ${ios ? Width*0.6 : Width*0.6}px;*/
+/*height: ${ios ? Height*0.08 : Height*0.08};*/
+/*align-items: center;*/
+/*justify-content: center;*/
+/*border-radius: ${ios ? 60 : 60}px;*/
+
+export const Container = styled.View`
+  background-color: white;
+  margin-top: 30%;
+  margin-bottom: 30%;
+  color: white;
+  border-width: 5px;
+  border-color: red;
 `;
 
 export const Title = styled.Text`    
   color: white;
   font-size: ${RFValue(25)}px;
   font-weight: bold;
+`;
+
+export const Text = styled.Text`
+  margin: 50px;
+  font-size: ${RFValue(25)}px;
 `;

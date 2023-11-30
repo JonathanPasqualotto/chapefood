@@ -55,7 +55,7 @@ export const Input = styled.TextInput`
   padding: ${ios ? 15 : 15}px ${ios ? 20 : 20}px;
   border: black 1px solid;
   border-radius: ${ios ? 20 : 20}px;
-  width: ${ios ? Width*0.8 : Width*0.7 };
+  width: ${ios ? Width*0.8 : Width*0.7 }px;
   background-color: white;
 `;
 
@@ -85,13 +85,25 @@ export const InputSearch = styled.TextInput`
   border: black 1px solid;
   border-radius: ${ios ? 20 : 20}px;
   background-color: white;
-  width: ${ios ? Width*0.18 : Width*0.1 };
+  width: ${ios ? Width*0.18 : Width*0.18 }px;
 `;
 
 export const LinhaProduto = styled.View`
   margin-top: 15px;
   border: white 2px solid;
   padding: 5px;
-  width: ${ios ? Width*0.84 : Width*0.84 };
+  width: ${ios ? Width*0.84 : Width*0.70 }px;
   border-radius: ${ios ? 10 : 10}px;
+`;
+
+export const TextGrid = styled.Text`
+  align-items: center;
+  background-color: white;
+  flex: 1;
+  margin: 4px;
+  padding: 20px;
+  border: black 2px solid;
+  font-size: ${RFValue(15)}px;
+  flex-basis: 0;
+  border-radius: 10px;
 `;

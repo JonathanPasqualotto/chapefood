@@ -5,7 +5,7 @@ import {Platform} from "react-native";
 
 const ios = Platform.OS === 'ios';
 
-export const Container = styled.View`
+export const Container = styled.SafeAreaView`
   flex: 1;
   background-color: #1e1f22;
 `;
@@ -41,9 +41,8 @@ export const Input = styled.TextInput`
   width: ${ios ? Width*0.8 : Width*0.5 }px;
   background-color: white;
 `;
-
 export const Footer = styled.View`
-  align-items: flex-end;
-  justify-content: right;
-  padding-right: 20px;
+  align-items: center;
+  justify-content: center;
+  padding-right: ${ios ? 20 : 20}px;
 `;

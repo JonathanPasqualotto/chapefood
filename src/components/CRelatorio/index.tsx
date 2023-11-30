@@ -1,10 +1,8 @@
-import { Table, Row} from "react-native-table-component";
-import { Container, Title} from "./styles";
+import { Table } from "react-native-table-component";
+import { Container, Text } from "./styles";
 import {TouchableOpacityProps} from "react-native";
 import React from "react";
-import { CColumn } from "../CColumn";
-import { Coluna } from "../../modules/Empresa/styles";
-import {StyleSheet, Text, View} from 'react-native';
+import {View} from 'react-native';
 
 interface Registros {
     quantidadeRegistros:number,
@@ -29,24 +27,6 @@ interface Props extends TouchableOpacityProps{
     registros:Registros;
 };
 
-const styles = StyleSheet.create({
-    container: {
-      marginTop: '30%',
-      marginBottom: '30%',
-      backgroundColor: 'white',
-      color: 'white',
-      paddingEnd: '5%',
-      paddingStart: '5%',
-      borderWidth: 5,
-      borderColor: 'red'
-    },
-
-    text: {
-        margin: 50,
-        fontSize: 55,
-    }
-  })
-
 export function CRelatorio({ title, registros }: Props) {
     try {
         if (Object.keys(registros).length > 0) {
@@ -64,17 +44,17 @@ export function CRelatorio({ title, registros }: Props) {
                 }
                 produtos.push(obj)
             });
-            
+
             return (
-    
-                <View style={styles.container}>
+
+                <Container>
                     <Table borderStyle={{ borderWidth: 2, borderColor: "#c8e1ff" }}>
                         {nmrPedido.map((numero, index) => (
-                            <Text key={index} style={styles.text}>`Pedido Nº {numero}`</Text>
+                            <Text key={index}>Pedido Nº {numero}</Text>
                         ))}
-                        <Text style={styles.text}>`Total: R$ {registros.totalizador.valor}`</Text>
+                        <Text style={{ fontWeight: 'bold' }}>Total: R$ {registros.totalizador.valor}</Text>
                     </Table>
-                </View>
+                </Container>
                 
             );
 
