@@ -28,7 +28,7 @@ export default function SLogin(){
             await schema.validate({usuario, senha})
             await AsyncStorage.setItem('@chapefood:usuarioLogado', usuario)
             await AsyncStorage.setItem('@chapefood:senhaLoagdo', senha)
-            await signIn({ usuario, senha, cargo })
+            await signIn({ usuario, senha })
         }
         catch (error) {
             setIsLoading(false)

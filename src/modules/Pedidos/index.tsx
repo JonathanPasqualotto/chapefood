@@ -66,7 +66,7 @@ export function SPedidos() {
 
     // VARIAVEIS PARA CRIAÇÃO
     const [ novoNomeCLiente, setNovoNomeCLiente ] = useState(null)
-    const [ novoStatus, setNovoStatus ] = useState<StatusOptions[]>([
+    const [ novoStatus, setNovoStatus ] = useState<StatusOptions[] | undefined>([
         StatusOptions.Aberto,
         StatusOptions.Encerrado,
     ]);
@@ -87,7 +87,7 @@ export function SPedidos() {
                     Alert.alert('Cadastro realizado com sucesso', '', [{text: 'OK'}])
                     setModalVisibleNew(false);
                     setNovoNomeCLiente(null)
-                    setNovoStatus(null)
+                    setNovoStatus(undefined)
                     setSelected("")
                     setFilteredData([])
                 })
@@ -114,7 +114,6 @@ export function SPedidos() {
     }
 
     async function handleEditPedido({ id, nomecliente, status }: IPedido) {
-        console.log(status)
         if (id !== null) {
             await api.patch('/pedidos/' +id.toString(), {
                 nomecliente,
@@ -142,7 +141,6 @@ export function SPedidos() {
 
             if (selectedProdutoInfo) {
                 setListProducts(prevList => [...prevList, selectProduto]);
-                console.log(listProducts)
                 setSelectProduto(null);
             }
         }

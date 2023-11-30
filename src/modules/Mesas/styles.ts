@@ -39,13 +39,18 @@ export const HeaderModal = styled.View`
   border-radius: ${ios ? 30 : 30}px;
 `;
 
-export const Input = styled.TextInput`
+interface TextInputProps {
+  onChangeText?: (text: string) => void;
+  value?: string;
+}
+
+export const Input = styled.TextInput<TextInputProps>`
   font-size: ${RFValue(15)}px;
   margin-top: ${ios ? 15 : 15}px;
   padding: ${ios ? 15 : 15}px ${ios ? 20 : 20}px;
   border: black 1px solid;
   border-radius: ${ios ? 20 : 20}px;
-  width: ${ios ? Width*0.8 : Width*0.7 };
+  width: ${ios ? Width*0.8 : Width*0.7 }px;
   background-color: white;
 `;
 
@@ -69,5 +74,5 @@ export const InputSearch = styled.TextInput`
   border-bottom-width: 2px;
   border-bottom-color: white;
   color: white;
-  width: ${ios ? Width*0.8 : Width*0.8 };
+  width: ${ios ? Width*0.8 : Width*0.8 }px;
 `;

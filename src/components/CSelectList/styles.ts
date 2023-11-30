@@ -11,6 +11,8 @@ interface Props{
     dropdownTextStyles?:any
     setSelected?:any
     data?:any
+    save?: string
+    onSelect?: any
 }
 
 export const Container = styled(SelectList)<Props>`
