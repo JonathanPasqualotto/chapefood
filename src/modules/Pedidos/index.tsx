@@ -16,9 +16,10 @@ import {
 } from "./styles";
 import {CCabecalhoHome} from "../../components/CCabecalhoHome";
 import {CColumn} from "../../components/CColumn";
-import {Alert, Modal, FlatList} from "react-native";
+import {Alert, Modal, FlatList, TouchableOpacity} from "react-native";
 import {CIconButton} from "../../components/CIconButton";
 import {CSelectList} from "../../components/CSelectList";
+import { CButton } from "../../components/CButton";
 
 interface IPedido{
     id: number
@@ -52,18 +53,14 @@ export function SPedidos() {
     // VARIAVEIS PARA EDIÇÃO
     const [ editPedidoId, setEditPedidoId] = useState(null)
     const [ editUsuario, setEditUsuario] = useState(null)
-    const [ editStatus , setEditStatus ] = useState<StatusOptions[]>([
-        StatusOptions.Aberto,
-        StatusOptions.Encerrado,
-    ]);
-    const [ editSenha, setEditSenha ] = useState(null)
-    const [ editLogin, setEditLogin ] = useState(null)
     const [ searchStatus, setSearchStatus ] = useState(null)
+    const [ editNomeCliente, setEditNomeCliente ] = useState(null)
 
     // VARIAVEIS ṔARA EXIBIR
     const [ dispNomeCLiente, setDispNomeCLiente ] = useState(null)
     const [ dispStatus, setDispStatus ] = useState(null)
     const [ dispProdutos, setDispProdutos ] = useState(null)
+    const [ dispMesa, setDispMesa ] = useState('')
 
     // VARIAVEIS PARA CRIAÇÃO
     const [ novoNomeCLiente, setNovoNomeCLiente ] = useState(null)
@@ -106,7 +103,7 @@ export function SPedidos() {
         }
     }
 
-    function handleDeletePedido({ id }: IPedido){
+    function handleEncerrarPedido({ id }: IPedido){
         if (id !== null) {
             Alert.alert('Deseja excluir o item selecionado?', '', [{text: 'Não'}, {text: 'Sim', onPress: async () => {
                     await api.delete('/pedidos/' + id)
@@ -114,6 +111,11 @@ export function SPedidos() {
                             setModalVisibleEdit(false)
                             setEditPedidoId(null)
                             setFilteredData([])
+                            setSelected("")
+                            setListProducts([]);
+                            setItensGrid([])
+                            setSelectProduto([])
+                            setQuantidade(null)
                         })
                 }}])
         }
@@ -121,7 +123,7 @@ export function SPedidos() {
 
     async function handleEditPedido({ id, nomeCliente, mesa, pedidosProdutos }: IPedido) {
         if (id !== null) {
-            await api.patch('/pedidos/' +id.toString(), {
+            await api.post('/pedidos/atualizar/' +id.toString(), {
                 nomeCliente,
                 mesa,
                 pedidosProdutos
@@ -132,6 +134,11 @@ export function SPedidos() {
                     setModalVisibleEdit(false)
                     setSelected("")
                     setFilteredData([])
+                    setItensGrid([])
+                    setEditNomeCliente(null)
+                    setListProducts([]);
+                    setSelectProduto([])
+                    setQuantidade(null)
                 })
                 .catch(error => {
                     console.log(error)
@@ -260,6 +267,9 @@ export function SPedidos() {
                                  setDispStatus(null)
                                  setDispProdutos(null)
                                  setSelected("")
+                                setSelectProduto([])
+                                setItensGrid([])
+                                setEditNomeCliente(null)
                             }}>
                             <CColumn align='center'>
                                 <CColumn align='right' marginLeft={380} marginBottom={1}>
@@ -270,6 +280,9 @@ export function SPedidos() {
                                          setDispStatus(null)
                                          setDispProdutos(null)
                                          setSelected("")
+                                        setSelectProduto([])
+                                        setItensGrid([])
+                                        setEditNomeCliente(null)
                                     }} />
                                 </CColumn>
                                 <HeaderModal>
@@ -277,43 +290,66 @@ export function SPedidos() {
                                     <Input
                                         placeholder="Nome"
                                         autoCapitalize='none'
-                                        onChangeText={setEditUsuario}
-                                        value={editUsuario}
-                                    />
-                                    <TextCad>{dispStatus}</TextCad>
-                                    <CSelectList
-                                        setSelected={(val) => setSelected(val)}
-                                        data={editStatus}
-                                        save="key"
-                                        onSelect={() => selected}
-                                        label="Cargo"
-                                        searchPlaceholder="Pesquisar"
-                                        defaultOption={{key: dispStatus, value: dispStatus }}
+                                        onChangeText={setEditNomeCliente}
+                                        value={editNomeCliente}
                                     />
 
-                                    <TextCad>{dispProdutos}</TextCad>
-                                    <Input
-                                        placeholder="Login"
-                                        autoCapitalize='none'
-                                        onChangeText={setEditLogin}
-                                        value={editLogin}
+                                    <TextCad>Mesa</TextCad>
+                                    <CSelectList
+                                        setSelected={(val) => setSelectedMesa(val)}
+                                        data={selectMesa}
+                                        save="key"
+                                        onSelect={() => selectedMesa}
+                                        label="Mesa"
+                                        searchPlaceholder="Pesquisar"
+                                        placeholder='Selecione uma mesa...'
                                     />
-                                    <TextCad>Senha</TextCad>
-                                    <Input
-                                        placeholder="Senha"
-                                        secureTextEntry={true}
-                                        autoCapitalize='none'
-                                        onChangeText={setEditSenha}
-                                        value={editSenha}
-                                    />
+
+                                    <Body style={{ marginTop: 20 }}>
+                                        <LinhaProduto>
+                                            <Coluna>
+                                                <TextCad>Produto</TextCad>
+                                            </Coluna>
+                                            <Coluna>
+                                                <CSelectList
+                                                    setSelected={(val) => setSelectProduto(val)}
+                                                    data={selectedProdutos}
+                                                    save="value"
+                                                    onSelect={() => selectProduto}
+                                                    label="Produto"
+                                                    searchPlaceholder="Pesquisar"
+                                                    placeholder='Selecione um produto...'
+                                                />
+                                            </Coluna>
+                                            <TextCad>*Qtd.</TextCad>
+                                            <Coluna>
+                                                <InputSearch
+                                                    keyboardType='numeric'
+                                                    onChangeText={setQuantidade}
+                                                    value={quantidade}
+                                                />
+                                                <CIconButton iconName='plus' color='blue' size={40} onPress={handleAddPRoduto} />
+                                            </Coluna>
+                                            {itensGrid.map((item, index) => (
+                                                <TextGrid key={index}>
+                                                    <TextGrid>{`Produto: ${item.produto}`}</TextGrid>
+                                                    <TextGrid>  </TextGrid>
+                                                    <TextGrid>{`Qtd: ${item.quantidade}`}</TextGrid>
+                                                    <TextGrid>  </TextGrid>
+                                                    <TextGrid>{`Status: ${item.status}`}</TextGrid>
+                                                </TextGrid>
+                                            ))}
+                                        </LinhaProduto>
+                                    </Body>
                                     <CColumn />
                                     <Coluna>
-                                        <CIconButton iconName="trash" color="red" size={50} onPress={() => handleDeletePedido({ id: editPedidoId})}/>
+                                        <CIconButton iconName="check" color="red" size={50} onPress={() => handleEncerrarPedido({ id: editPedidoId})}/>
 
                                         <CIconButton iconName='save' color='black' size={50} onPress={() => handleEditPedido({
                                             id: editPedidoId,
-                                            nomecliente: editUsuario,
-                                            status: selected
+                                            nomeCliente: editNomeCliente,
+                                            mesa: selectedMesa,
+                                            pedidosProdutos: listProducts
                                         })} />
                                     </Coluna>
                                 </HeaderModal>
@@ -324,43 +360,75 @@ export function SPedidos() {
                         <></>
                     }
 
-                {Array.isArray(filteredData) && filteredData.length > 0
-                    ? filteredData.map((item, index) => (
+                    {Array.isArray(filteredData) && filteredData.length > 0
+                        ? filteredData.map((item, index) => (
+                            <LinhaContainer key={index}>
+                                <Coluna>
+                                    <Text> </Text>
+                                    {item.status !== 'Encerrado' && (
+                                        <CIconButton
+                                            iconName="edit"
+                                            color="blue"
+                                            size={50}
+                                            onPress={() => {
+                                                setEditPedidoId(item.id);
+                                                setDispNomeCLiente(item.nomecliente);
+                                                setDispStatus(item.status);
+                                                setDispMesa(item.mesa.id);
+                                                setEditNomeCliente(item.nomecliente);
+                                                setModalVisibleEdit(true);
+                                                setItensGrid(
+                                                    item.pedidoProdutos.map((item) => {
+                                                        return {
+                                                            produto: item.produto.id,
+                                                            quantidade: item.quantidade,
+                                                            status: item.status,
+                                                        };
+                                                    })
+                                                );
+                                            }}
+                                        />
+                                    )}
+                                </Coluna>
+                                <Text>Mesa: {selectMesa.find((mesa) => mesa.key === item.mesa.id)?.value}</Text>
+                                <Text>Pedido: {item.nomecliente}</Text>
+                                <Text style={{ textAlign: 'center', color: 'red' }}>{item.status}</Text>
+                            </LinhaContainer>
+                        ))
+                        : Array.isArray(dados) && dados.map((item, index) => (
                         <LinhaContainer key={index}>
                             <Coluna>
-                                <Text></Text>
-                                <CIconButton iconName="edit" color="blue" size={50} onPress={() => {
-                                     setEditPedidoId(item.id)
-                                     setDispNomeCLiente(item.nomecliente)
-                                     setDispStatus(item.status)
-                                    setModalVisibleEdit(true)
-                                }} />
+                                <Text> </Text>
+                                {item.status !== 'Encerrado' && (
+                                    <CIconButton
+                                        iconName="edit"
+                                        color="blue"
+                                        size={50}
+                                        onPress={() => {
+                                            setEditPedidoId(item.id);
+                                            setDispNomeCLiente(item.nomecliente);
+                                            setDispStatus(item.status);
+                                            setDispMesa(item.mesa.id);
+                                            setEditNomeCliente(item.nomecliente);
+                                            setModalVisibleEdit(true);
+                                            setItensGrid(
+                                                item.pedidoProdutos.map((item) => {
+                                                    return {
+                                                        produto: item.produto.id,
+                                                        quantidade: item.quantidade,
+                                                        status: item.status,
+                                                    };
+                                                })
+                                            );
+                                        }}
+                                    />
+                                )}
                             </Coluna>
-
-                            <Text>Mesa: {selectMesa.find(mesa => mesa.key === item.mesa.id)?.value}</Text>
+                            <Text>Mesa: {selectMesa.find((mesa) => mesa.key === item.mesa.id)?.value}</Text>
                             <Text>Pedido: {item.nomecliente}</Text>
                             <Text style={{ textAlign: 'center', color: 'red' }}>{item.status}</Text>
-
                         </LinhaContainer>
-                    ))
-                    : Array.isArray(dados) && dados.map((item, index) => (
-                        <LinhaContainer key={index}>
-                            <Coluna>
-                                <Text></Text>
-                                <CIconButton iconName="edit" color="blue" size={50} onPress={() => {
-                                     setEditPedidoId(item.id)
-                                     setDispNomeCLiente(item.nomecliente)
-                                     setDispStatus(item.status)
-                                    setModalVisibleEdit(true)
-                                }} />
-                            </Coluna>
-
-                            <Text>Mesa: {selectMesa.find(mesa => mesa.key === item.mesa.id)?.value}</Text>
-                            <Text>Pedido: {item.nomecliente}</Text>
-                            <Text style={{ textAlign: 'center', color: 'red' }}>{item.status}</Text>
-
-                        </LinhaContainer>
-                ))}
+                    ))}
             </Body>
             <Footer>
                 <CIconButton iconName='plus' color='green' size={60} onPress={() => setModalVisibleNew(true)} style={{ height: 80 }}/>

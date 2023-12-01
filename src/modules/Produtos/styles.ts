@@ -11,13 +11,13 @@ export const Container = styled.SafeAreaView`
 `;
 
 export const LinhaContainer = styled.TouchableOpacity`
-    margin-top:  ${ios ? Width*0.15 : Width*0.15};
+    margin-top:  ${ios ? Width*0.15 : Width*0.15}px;
     background-color: #fff;
     border-radius: ${ios ? 50 : 50}px;
     align-items: center;
     padding: ${ios ? 10 : 10}px;
-    width: ${ios ? Width*0.8 : Width*0.8};
-    height: ${ios ? Height*0.17 : Height*0.17};
+    width: ${ios ? Width*0.8 : Width*0.8}px;
+    height: ${ios ? Height*0.17 : Height*0.17}px;
 `;
 
 export const Body = styled.ScrollView.attrs({
@@ -55,7 +55,7 @@ export const Input = styled.TextInput`
   padding: ${ios ? 15 : 15}px ${ios ? 20 : 20}px;
   border: black 1px solid;
   border-radius: ${ios ? 20 : 20}px;
-  width: ${ios ? Width*0.8 : Width*0.7 };
+  width: ${ios ? Width*0.8 : Width*0.7 }px;
   background-color: white;
 `;
 
@@ -87,5 +87,5 @@ export const InputSearch = styled.TextInput`
   border-bottom-width: 2px;
   border-bottom-color: white;
   color: white;
-  width: ${ios ? Width*0.8 : Width*0.8 };
+  width: ${ios ? Width*0.8 : Width*0.8 }px;
 `;

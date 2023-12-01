@@ -3,6 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import OrdemServicoCard from './OrdemServicoCard';
 import { ScrollView } from 'react-native';
 import api from '../../../utils/api';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface OrdemServico {
   id_pedido_produto: number;
@@ -13,15 +14,18 @@ interface OrdemServico {
   quantidade: number;
 }
 
-let empresas:string[] = [];
-
-empresaLogada.map((valor) => {
-    empresas.push(valor.id)
-})
-
 
 const ListagemOrdemServico: React.FC = () => {
   const [data, setData]= useState<OrdemServico[]>([]);
+  const [empresaLogada, setEmpresaLogada] = useState(null);
+
+  let empresas: string[] = [];
+
+  if (empresaLogada !== null && Array.isArray(empresaLogada)) {
+    empresaLogada.map((valor) => {
+      return empresas.push(valor.id)
+    });
+  }
 
   const loadOrders = async ()=>{   
     try {
@@ -32,6 +36,24 @@ const ListagemOrdemServico: React.FC = () => {
       console.log(error);
     }
   }
+
+  useEffect(() => {
+    const carregarEmpresaLogada = async () => {
+      try {
+        const empresaLogadaValor = await AsyncStorage.getItem('@chapefood:empresaLogada');
+        if (empresaLogadaValor !== null) {
+          const empresaLogadaArray = JSON.parse(empresaLogadaValor)
+          setEmpresaLogada(empresaLogadaArray)
+        }
+
+      } catch (error) {
+        console.error('Erro ao recuperar o valor do AsyncStorage:', error);
+      }
+    };
+
+    // Chamar a função para carregar o valor do AsyncStorage
+    carregarEmpresaLogada();
+  }, []);
   
   useEffect(()=>{
     loadOrders();
