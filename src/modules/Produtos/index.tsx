@@ -136,9 +136,14 @@ export function SProdutos() {
             .catch(erro => {
                 console.log(erro)
             })
-
     }
 
+    let empresas:string[] = [];
+
+    empresaLogada.map((valor) => {
+        empresas.push(valor.id)
+    })
+    
     useEffect(() => {
             api.get('/empresas')
                 .then(resp => {
@@ -150,7 +155,7 @@ export function SProdutos() {
                 .catch(erro => {
                     console.log(erro)
                 }),
-                api.get('/produtos')
+                api.get('/produtos?ids='+empresas)
                     .then(response => {
                         setDados(response.data)
                     })
