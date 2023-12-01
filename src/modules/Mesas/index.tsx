@@ -8,6 +8,8 @@ import {CColumn} from "../../components/CColumn";
 import {CTable} from "../../components/CTable";
 import {CSelectList} from "../../components/CSelectList";
 import {CTableRow} from "../../components/CTableRow";
+import { ApiData } from "./interfaces/ApiData";
+import { IEmpresa } from "../Empresa/interfaces/IEmpresa";
 
 interface IMesa{
     id?: number
@@ -18,28 +20,28 @@ interface IMesa{
 
 
 export function SMesas() {
-    const [ dados, setDados ] = useState([])
+    const [ dados, setDados ] = useState<Array<ApiData>>([])
     const [ modalVisibleNew, setModalVisibleNew ] = useState(false)
     const [ modalVisibleEdit, setModalVisibleEdit] = useState(false);
-    const [ selected, setSelected ] = useState("")
+    const [ selected, setSelected ] = useState<string | undefined>("")
     const [ selectEmpresa, setSelectEmpresa ] = useState([])
-    const [ searchMesas , setSearchMesas ] = useState(null)
-    const [ filteredData, setFilteredData ] = useState([]);
+    const [ searchMesas , setSearchMesas ] = useState<string | undefined>(undefined)
+    const [ filteredData, setFilteredData ] = useState<Array<ApiData>>([]);
 
     // VARIAVEIS PARA CRIAÇÃO
-    const [ novaCapacidade, setNovaCapacidade ] = useState(null)
-    const [ novaDescricao, setNovaDescricao ] = useState(null)
+    const [ novaCapacidade, setNovaCapacidade ] = useState<number | undefined>(undefined)
+    const [ novaDescricao, setNovaDescricao ] = useState<string | undefined>(undefined)
 
     // VARIAVEIS PARA EDIÇÃO
-    const [ editMesaId, setEditMesaId] = useState(null)
-    const [ editCapacidade, setEditCapacidade] = useState(null)
-    const [ editDescricao, setEditDescricao ] = useState(null)
+    const [ editMesaId, setEditMesaId] = useState<number | undefined>(undefined)
+    const [ editCapacidade, setEditCapacidade] = useState<number | undefined>(undefined)
+    const [ editDescricao, setEditDescricao ] = useState<string | undefined>(undefined)
 
 
     // VARIAVEIS ṔARA EXIBIR
-    const [ dispCapacidade, setDispCapacidade ] = useState(null)
-    const [ dispDescricao, setDispDescricao ] = useState(null)
-    const [ dispEmpresa, setDispEmpresa ] = useState(null)
+    const [ dispCapacidade, setDispCapacidade ] = useState<number | undefined>(undefined)
+    const [ dispDescricao, setDispDescricao ] = useState<string | undefined>(undefined)
+    const [ dispEmpresa, setDispEmpresa ] = useState<string | undefined>(undefined)
 
     async function handleDeleteMesa({ id }: IMesa){
         if (id !== null) {
@@ -47,8 +49,8 @@ export function SMesas() {
                     await api.delete('/mesas/' + id)
                         .then(resp =>{
                             setModalVisibleEdit(false)
-                            setEditMesaId(null)
-                            handleSearch({ id: '' })
+                            setEditMesaId(undefined)
+                            handleSearch({ id: undefined })
                             setFilteredData([])
                         })
                 }}])
@@ -65,10 +67,10 @@ export function SMesas() {
                 .then(response => {
                     Alert.alert('Cadastro realizado com sucesso', '', [{text: 'OK'}])
                     setModalVisibleNew(false);
-                    setNovaDescricao(null)
-                    setNovaCapacidade(null)
+                    setNovaDescricao(undefined)
+                    setNovaCapacidade(undefined)
                     setSelected("")
-                    handleSearch({ id: '' })
+                    handleSearch({ id: undefined })
                     setFilteredData([])
                 })
                 .catch(error => {
@@ -90,10 +92,10 @@ export function SMesas() {
                 .then(response => {
                     Alert.alert('Ajustes realizados com sucesso', '', [{text: 'OK'}])
                     setModalVisibleEdit(false);
-                    setEditDescricao(null)
-                    setEditCapacidade(null)
-                    setEditMesaId(null)
-                    handleSearch({ id: '' })
+                    setEditDescricao(undefined)
+                    setEditCapacidade(undefined)
+                    setEditMesaId(undefined)
+                    handleSearch({ id: undefined })
                     setFilteredData([])
                 })
                 .catch(error => {
@@ -105,7 +107,8 @@ export function SMesas() {
     async function handleSearch({ descricao }: IMesa) {
         await api.get('/mesas')
             .then(response => {
-                const filteredResults = response.data.filter(item => item.descricao.toLowerCase().includes(descricao.toLowerCase()));
+                const apiResponse : ApiData[] = response.data;
+                const filteredResults = apiResponse.filter((item: ApiData) => item.descricao!.toLowerCase().includes(descricao!.toLowerCase()));
                 setFilteredData(filteredResults);
             })
             .catch(error => {
@@ -113,7 +116,7 @@ export function SMesas() {
             }),
         await api.get('/empresas')
             .then(resp => {
-                let empresa = resp.data.map((item) => {
+                let empresa = resp.data.map((item:IEmpresa) => {
                     return {key: item.id, value: item.nome}
                 })
                 setSelectEmpresa(empresa)
@@ -126,7 +129,7 @@ export function SMesas() {
     useEffect(() => {
         api.get('/empresas')
             .then(resp => {
-                let empresa = resp.data.map((item) => {
+                let empresa = resp.data.map((item:IEmpresa) => {
                     return {key: item.id, value: item.nome}
                 })
                 setSelectEmpresa(empresa)
@@ -170,24 +173,24 @@ export function SMesas() {
                             visible={modalVisibleEdit}
                             onRequestClose={() => {
                                 setModalVisibleEdit(false);
-                                setEditMesaId(null)
-                                setDispDescricao(null)
-                                setDispCapacidade(null)
-                                setDispEmpresa(null)
-                                setEditDescricao(null)
-                                setEditCapacidade(null)
+                                setEditMesaId(undefined)
+                                setDispDescricao(undefined)
+                                setDispCapacidade(undefined)
+                                setDispEmpresa(undefined)
+                                setEditDescricao(undefined)
+                                setEditCapacidade(undefined)
                                 setSelected("")
                             }}>
                             <CColumn align='center'>
                                 <CColumn align='right' marginLeft={380} marginBottom={1}>
                                     <CIconButton marginLeft={180} iconName='close' color='red' size={40} onPress={() => {
                                         setModalVisibleEdit(false);
-                                        setEditMesaId(null)
-                                        setDispDescricao(null)
-                                        setDispCapacidade(null)
-                                        setDispEmpresa(null)
-                                        setEditDescricao(null)
-                                        setEditCapacidade(null)
+                                        setEditMesaId(undefined)
+                                        setDispDescricao(undefined)
+                                        setDispCapacidade(undefined)
+                                        setDispEmpresa(undefined)
+                                        setEditDescricao(undefined)
+                                        setEditCapacidade(undefined)
                                         setSelected("")
                                     }} />
                                 </CColumn>
@@ -196,7 +199,7 @@ export function SMesas() {
                                     <Input
                                         placeholder="Descrição"
                                         autoCapitalize='none'
-                                        onChangeText={setEditDescricao}
+                                        onChangeText={(text:string) => setEditDescricao(text)}
                                         value={editDescricao}
                                     />
                                     <TextCad>{dispCapacidade}</TextCad>
@@ -204,20 +207,18 @@ export function SMesas() {
                                         placeholder="Capacidade"
                                         autoCapitalize='none'
                                         keyboardType="numeric"
-                                        onChangeText={setEditCapacidade}
-                                        value={editCapacidade.valueOf()}
+                                        onChangeText={(text:string) => setEditCapacidade(Number.parseInt(text))}
+                                        value={editCapacidade!.valueOf().toString()}
                                     />
                                     <TextCad>{dispEmpresa}</TextCad>
                                     <CSelectList
-                                        setSelected={(val) => setSelected(val)}
+                                        setSelected={(val:any) => setSelected(val)}
                                         data={selectEmpresa}
                                         save="key"
                                         onSelect={() => selected}
                                         label="Empresa(s)"
                                         searchPlaceholder="Pesquisar"
                                     />
-
-                                    <CColumn />
 
                                     <Coluna>
                                         <CIconButton iconName="trash" color="red" size={50} onPress={() => handleDeleteMesa({ id: editMesaId})}/>
@@ -226,7 +227,7 @@ export function SMesas() {
                                             id: editMesaId,
                                             descricao: editDescricao,
                                             capacidade: editCapacidade,
-                                            empresa: selected
+                                            empresa: Number.parseInt(selected ? selected : '')
                                         })} />
                                     </Coluna>
                                 </HeaderModal>
@@ -238,40 +239,40 @@ export function SMesas() {
                      {/*FIM MODAL EDIÇÃO*/}
 
 
-                    <CTableRow backgroundColor='green' data={["Descrição","Capacidade","Empresa",""]} textStyle={{ color: 'white', fontSize: 18, fontWeight: 'bold', textAlign: 'center' }}/>
+                    <CTableRow backgroundColor='green' data={["Descrição","Capacidade","Empresa",""]} textStyle={[{ color: 'white', fontSize: 18, fontWeight: 'bold', textAlign: 'center' }]}/>
 
                     {Array.isArray(filteredData) && filteredData.length > 0
                         ? filteredData.map((item, index) => (
-                            <CTableRow backgroundColor='white' key={index} textStyle={{ color: 'black', fontSize: 18, fontWeight: 'normal', textAlign: 'center' }}
-                                       data={[item.descricao, item.capacidade, item.empresa.nome,
+                            <CTableRow backgroundColor='white' key={index} textStyle={[{ color: 'black', fontSize: 18, fontWeight: 'normal', textAlign: 'center' }]}
+                                       data={[item.descricao, item.capacidade, item.empresa!.nome,
 
                                            <CIconButton style={{ alignSelf: 'center' }} marginBottom={15} iconName="edit" color="blue" size={30} onPress={() => {
                                                setEditMesaId(item.id)
                                                setDispDescricao(item.descricao)
                                                setDispCapacidade(item.capacidade)
-                                               setDispEmpresa(item.empresa.nome)
+                                               setDispEmpresa(item.empresa!.nome)
                                                setEditDescricao(item.descricao)
-                                               setEditCapacidade(item.capacidade.toString())
+                                               setEditCapacidade(item.capacidade!)
                                                setModalVisibleEdit(true)
-                                               setSelected(item.empresa.id)
+                                               setSelected(item.empresa!.id?.toString())
                                            }} />
 
                                        ]}
                             />
                         ))
                         : Array.isArray(dados) && dados.map((item, index) => (
-                            <CTableRow backgroundColor='white' key={index} textStyle={{ color: 'black', fontSize: 18, fontWeight: 'normal', textAlign: 'center' }}
-                                 data={[item.descricao, item.capacidade, item.empresa.nome,
+                            <CTableRow backgroundColor='white' key={index} textStyle={[{ color: 'black', fontSize: 18, fontWeight: 'normal', textAlign: 'center' }]}
+                                 data={[item.descricao, item.capacidade, item.empresa!.nome,
 
                                      <CIconButton style={{ alignSelf: 'center' }} marginBottom={15} iconName="edit" color="blue" size={30} onPress={() => {
                                          setEditMesaId(item.id)
                                          setDispDescricao(item.descricao)
                                          setDispCapacidade(item.capacidade)
-                                         setDispEmpresa(item.empresa.nome)
+                                         setDispEmpresa(item.empresa!.nome)
                                          setEditDescricao(item.descricao)
-                                         setEditCapacidade(item.capacidade.toString())
+                                         setEditCapacidade(item.capacidade)
                                          setModalVisibleEdit(true)
-                                         setSelected(item.empresa.id)
+                                         setSelected(item.empresa!.id?.toString())
                                      }} />
 
                                  ]}
@@ -279,7 +280,6 @@ export function SMesas() {
                     ))}
                 </CTable>
             </Body>
-            <CColumn />
 
             <Footer>
                 <CIconButton iconName='plus' color='green' size={60} onPress={() => setModalVisibleNew(true)} style={{ height: 80 }}/>
@@ -294,8 +294,8 @@ export function SMesas() {
                             visible={modalVisibleNew}
                             onRequestClose={() => {
                                 setModalVisibleNew(false)
-                                setNovaDescricao(null)
-                                setNovaCapacidade(null)
+                                setNovaDescricao(undefined)
+                                setNovaCapacidade(undefined)
                                 setSelected("")
                             }}>
 
@@ -304,8 +304,8 @@ export function SMesas() {
                                 <CColumn align='right' marginLeft={380} marginBottom={1}>
                                     <CIconButton iconName='close' color='red' size={40} onPress={() => {
                                         setModalVisibleNew(false)
-                                        setNovaDescricao(null)
-                                        setNovaCapacidade(null)
+                                        setNovaDescricao(undefined)
+                                        setNovaCapacidade(undefined)
                                         setSelected("")
                                     }} />
                                 </CColumn>
@@ -314,7 +314,7 @@ export function SMesas() {
                                     <TextCad>*Descrição</TextCad>
                                     <Input
                                         placeholder="Descrição"
-                                        onChangeText={setNovaDescricao}
+                                        onChangeText={(text:string) => setNovaDescricao(text)}
                                         value={novaDescricao}
                                     />
                                     <TextCad>*Capacidade</TextCad>
@@ -322,12 +322,12 @@ export function SMesas() {
                                         placeholder="Capacidade"
                                         autoCapitalize='none'
                                         keyboardType="numeric"
-                                        onChangeText={setNovaCapacidade}
-                                        value={novaCapacidade}
+                                        onChangeText={(text:string) => setNovaCapacidade(Number.parseInt(text))}
+                                        value={novaCapacidade?.toString()}
                                     />
                                     <TextCad>*Empresa</TextCad>
                                     <CSelectList
-                                        setSelected={(val) => setSelected(val)}
+                                        setSelected={(val:any) => setSelected(val)}
                                         data={selectEmpresa}
                                         save="key"
                                         onSelect={() => selected}
@@ -335,14 +335,13 @@ export function SMesas() {
                                         searchPlaceholder="Selecione uma"
                                     />
 
-                                    <CColumn />
 
                                     <Coluna>
                                         <Text></Text>
                                         <CIconButton iconName='save' color='black' size={40} onPress={() => handleNewMesa({
                                             descricao: novaDescricao,
                                             capacidade: novaCapacidade,
-                                            empresa: selected
+                                            empresa: Number.parseInt(selected!)
                                         })} />
                                     </Coluna>
                                 </HeaderModal>
