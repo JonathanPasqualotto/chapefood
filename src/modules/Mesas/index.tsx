@@ -105,6 +105,7 @@ export function SMesas() {
     }
 
     async function handleSearch({ descricao }: IMesa) {
+
         await api.get('/mesas')
             .then(response => {
                 const apiResponse : ApiData[] = response.data;
@@ -125,19 +126,28 @@ export function SMesas() {
                 console.log(erro)
             })
     }
+    
+    var empresaLogada :any[] = [{'id': '2'}];
 
+    let empresas:string[] = [];
+
+    empresaLogada .map((valor) => {
+        empresas.push(valor.id)
+    })
+    
     useEffect(() => {
         api.get('/empresas')
-            .then(resp => {
-                let empresa = resp.data.map((item:IEmpresa) => {
-                    return {key: item.id, value: item.nome}
-                })
-                setSelectEmpresa(empresa)
+        .then(resp => {
+            let empresa = resp.data.map((item:IEmpresa) => {
+                return {key: item.id, value: item.nome}
             })
-            .catch(erro => {
-                console.log(erro)
-            }),
-        api.get('/mesas')
+            setSelectEmpresa(empresa)
+        })
+        .catch(erro => {
+            console.log(erro)
+        }),
+        
+        api.get('/mesas?ids='+empresas)
                 .then(response => {
                     setDados(response.data)
                 })

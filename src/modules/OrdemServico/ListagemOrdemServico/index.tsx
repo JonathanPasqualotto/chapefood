@@ -13,12 +13,21 @@ interface OrdemServico {
   quantidade: number;
 }
 
+var empresaLogada:any[] = [{'id': '2'}];
+
+let empresas:string[] = [];
+
+empresaLogada.map((valor) => {
+    empresas.push(valor.id)
+})
+
+
 const ListagemOrdemServico: React.FC = () => {
   const [data, setData]= useState<OrdemServico[]>([]);
 
   const loadOrders = async ()=>{   
     try {
-      const response = await api.get('/pedidos/ordens')
+      const response = await api.get('/pedidos/ordens?ids='+empresas)
       const json = response.data;
       setData(json)
     } catch(error){
