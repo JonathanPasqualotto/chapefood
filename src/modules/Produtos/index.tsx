@@ -9,6 +9,7 @@ import {CTable} from "../../components/CTable";
 import {CTableRow} from "../../components/CTableRow";
 import {Checkbox} from "expo-checkbox";
 import {CMultSelectList} from "../../components/CMultSelectList";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface IProdutos{
     id?: number
@@ -27,6 +28,7 @@ export function SProdutos() {
     const [ selectEmpresa, setSelectEmpresa ] = useState([])
     const [ searchProduto , setSearchProduto ] = useState(null)
     const [ filteredData , setFilteredData ] = useState([]);
+    const [empresaLogada, setEmpresaLogada] = useState(null);
 
     // VARIAVEIS PARA CRIAÇÃO
     const [ novoManufaturado, setNovoManufaturado ] = useState(false)
@@ -117,8 +119,16 @@ export function SProdutos() {
         }
     }
 
+    let empresas: string[] = [];
+
+    if (empresaLogada !== null && Array.isArray(empresaLogada)) {
+        empresaLogada.map((valor) => {
+            return empresas.push(valor.id)
+        });
+    }
+
     async function handleSearch({ descricao }: IProdutos) {
-        await api.get('/produtos')
+        await api.get('/produtos?ids=' + empresas)
             .then(response => {
                 const filteredResults = response.data.filter(item => item.descricao.toLowerCase().includes(descricao.toLowerCase()));
                 setFilteredData(filteredResults);
@@ -138,24 +148,36 @@ export function SProdutos() {
             })
     }
 
-    let empresas:string[] = [];
+    useEffect(() => {
+        const carregarEmpresaLogada = async () => {
+            try {
+                const empresaLogadaValor = await AsyncStorage.getItem('@chapefood:empresaLogada');
+                if (empresaLogadaValor !== null) {
+                    const empresaLogadaArray = JSON.parse(empresaLogadaValor)
+                    setEmpresaLogada(empresaLogadaArray)
+                }
 
-    empresaLogada.map((valor) => {
-        empresas.push(valor.id)
-    })
-    
+            } catch (error) {
+                console.error('Erro ao recuperar o valor do AsyncStorage:', error);
+            }
+        };
+
+        // Chamar a função para carregar o valor do AsyncStorage
+        carregarEmpresaLogada();
+    }, []);
+
     useEffect(() => {
             api.get('/empresas')
                 .then(resp => {
                     let empresa = resp.data.map((item) => {
                         return {key: item.id, value: item.nome}
                     })
-                     setSelectEmpresa(empresa)
+                    setSelectEmpresa(empresa)
                 })
                 .catch(erro => {
                     console.log(erro)
                 }),
-                api.get('/produtos?ids='+empresas)
+                api.get('/produtos?ids=' + empresas)
                     .then(response => {
                         setDados(response.data)
                     })
