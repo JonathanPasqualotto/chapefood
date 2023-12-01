@@ -10,6 +10,7 @@ import {CSelectList} from "../../components/CSelectList";
 import {CTableRow} from "../../components/CTableRow";
 import { ApiData } from "./interfaces/ApiData";
 import { IEmpresa } from "../Empresa/interfaces/IEmpresa";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface IMesa{
     id?: number
@@ -27,6 +28,7 @@ export function SMesas() {
     const [ selectEmpresa, setSelectEmpresa ] = useState([])
     const [ searchMesas , setSearchMesas ] = useState<string | undefined>(undefined)
     const [ filteredData, setFilteredData ] = useState<Array<ApiData>>([]);
+    const [empresaLogada, setEmpresaLogada] = useState(null);
 
     // VARIAVEIS PARA CRIAÇÃO
     const [ novaCapacidade, setNovaCapacidade ] = useState<number | undefined>(undefined)
@@ -104,9 +106,18 @@ export function SMesas() {
         }
     }
 
+
+    let empresas: string[] = [];
+
+    if (empresaLogada !== null && Array.isArray(empresaLogada)) {
+        empresaLogada.map((valor) => {
+            return empresas.push(valor.id)
+        });
+    }
+
     async function handleSearch({ descricao }: IMesa) {
 
-        await api.get('/mesas')
+        await api.get('/mesas?ids='+empresas)
             .then(response => {
                 const apiResponse : ApiData[] = response.data;
                 const filteredResults = apiResponse.filter((item: ApiData) => item.descricao!.toLowerCase().includes(descricao!.toLowerCase()));
@@ -126,11 +137,21 @@ export function SMesas() {
                 console.log(erro)
             })
     }
-    
-    let empresas:string[] = [];
 
-    empresaLogada .map((valor) => {
-        empresas.push(valor.id)
+
+    useEffect(() => {
+        const carregarEmpresaLogada = async () => {
+            try {
+                const empresaLogadaValor = await AsyncStorage.getItem('@chapefood:empresaLogada');
+                if (empresaLogadaValor !== null) {
+                    const empresaLogadaArray = JSON.parse(empresaLogadaValor)
+                    setEmpresaLogada(empresaLogadaArray)
+                }
+
+            } catch (error) {
+                console.error('Erro ao recuperar o valor do AsyncStorage:', error);
+            }
+        };
     })
     
     useEffect(() => {
@@ -144,7 +165,6 @@ export function SMesas() {
         .catch(erro => {
             console.log(erro)
         }),
-        
         api.get('/mesas?ids='+empresas)
                 .then(response => {
                     setDados(response.data)
