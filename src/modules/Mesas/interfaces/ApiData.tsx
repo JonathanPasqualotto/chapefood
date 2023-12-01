@@ -1,6 +1,6 @@
 import { IEmpresa } from "../../Empresa/interfaces/IEmpresa"
 
-export interface FilteredData{
+export interface ApiData{
     id?: number
     capacidade?: number
     descricao?: string
