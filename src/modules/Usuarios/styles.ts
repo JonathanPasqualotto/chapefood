@@ -26,7 +26,7 @@ export const TextCad = styled.Text`
 export const HeaderModal = styled.View`
   background-color: #757779;
   width: ${ios ? Width*0.9 : Width*0.8 }px;
-  height: ${ios ? Height*0.8 : Height*0.8 }px;
+  height: ${ios ? Height*0.85 : Height*0.85 }px;
   padding: ${ios ? 15 : 10}px ${ios ? 20 : 28}px;
   margin: ${ios ? 40 : 60}px ${ios ? 50 : 50}px;
   border-radius: ${ios ? 30 : 30}px;
@@ -61,5 +61,5 @@ export const InputSearch = styled.TextInput`
   border-bottom-width: 2px;
   border-bottom-color: white;
   color: white;
-  width: ${ios ? Width*0.8 : Width*0.8 };
+  width: ${ios ? Width*0.8 : Width*0.8 }px;
 `;

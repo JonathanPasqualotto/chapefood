@@ -6,7 +6,7 @@ import { FontAwesome } from "@expo/vector-icons";
 interface Props extends TouchableOpacityProps {
     color?: string
     backgroundColor?: string
-    iconName?: 'search' | 'edit' | 'plus' | 'trash' | 'save' | 'close'
+    iconName?: 'search' | 'edit' | 'plus' | 'trash' | 'save' | 'close' | 'check'
     size?: number
     marginRight?: number
     marginTop?: number

@@ -44,6 +44,10 @@ const styles = StyleSheet.create({
     backgroundColor: "green",
     width: '40%'
   },
+  button2: {
+    backgroundColor: "red",
+    width: '40%'
+  },
 });
 
 interface OrdemServicoCardProps {
@@ -104,17 +108,17 @@ const OrdemServicoCard: React.FC<OrdemServicoCardProps> = ({
         {status === 'Aguardando Produção' && (
           <TouchableOpacity style={styles.button}>
             <Button
-              color={"green"}
-              title={"Iniciar"}
+              color={"white"}
+              title="Iniciar"
               onPress={e => handleIniciar()}
             />
           </TouchableOpacity>
         )}
         {status === 'Em Produção' && (
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button2}>
             <Button
-              color={"red"}
-              title={"Encerrar"}
+              color="white"
+              title="Encerrar"
               onPress={e => handleEncerrar()}
             />
           </TouchableOpacity>
