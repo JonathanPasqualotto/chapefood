@@ -138,15 +138,12 @@ export function SProdutos() {
             })
     }
 
-    var empresaLogada:any[] = [{'id': '1'}];
-
     let empresas:string[] = [];
 
     empresaLogada.map((valor) => {
         empresas.push(valor.id)
     })
     
-
     useEffect(() => {
             api.get('/empresas')
                 .then(resp => {

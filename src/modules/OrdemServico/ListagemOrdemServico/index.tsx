@@ -13,8 +13,6 @@ interface OrdemServico {
   quantidade: number;
 }
 
-var empresaLogada:any[] = [{'id': '2'}];
-
 let empresas:string[] = [];
 
 empresaLogada.map((valor) => {

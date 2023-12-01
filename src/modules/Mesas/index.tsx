@@ -127,8 +127,6 @@ export function SMesas() {
             })
     }
     
-    var empresaLogada :any[] = [{'id': '2'}];
-
     let empresas:string[] = [];
 
     empresaLogada .map((valor) => {
