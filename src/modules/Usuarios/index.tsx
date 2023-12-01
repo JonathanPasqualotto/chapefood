@@ -8,6 +8,7 @@ import {CIconButton} from "../../components/CIconButton";
 import {CTable} from "../../components/CTable";
 import {CTableRow} from "../../components/CTableRow";
 import {CSelectList} from "../../components/CSelectList";
+import {CMultSelectList} from "../../components/CMultSelectList";
 
 interface IUsuario{
     id: number
@@ -15,6 +16,7 @@ interface IUsuario{
     senha: string
     cargo: CargoOptions
     login: string
+    empresa?: any
 }
 
 enum CargoOptions {
@@ -28,6 +30,8 @@ export function SUsuarios() {
     const [ modalVisibleNew, setModalVisibleNew ] = useState(false)
     const [ modalVisibleEdit, setModalVisibleEdit] = useState(false)
     const [ selected, setSelected ] = useState('')
+    const [ selectEmpresa, setSelectEmpresa ] = useState([])
+    const [ selectedEmpresa, setSelectedEmpresa ] = useState("")
     const [selectCargo, setSelectCargo] = useState<CargoOptions[]>([
         CargoOptions.Gerente,
         CargoOptions.Atendente,
@@ -62,13 +66,14 @@ export function SUsuarios() {
     const [ novoLogin, setNovoLogin ] = useState(null)
     const [ novaSenha, setNovaSenha ] = useState(null)
 
-    async function handleNewUsuario({ nome, senha, login, cargo }: IUsuario){
-        if (nome !== null && senha !== null && login !== null && cargo !== null){
+    async function handleNewUsuario({ nome, senha, login, cargo, empresa }: IUsuario){
+        if (nome !== null && senha !== null && login !== null && cargo !== null && (Array.isArray(empresa) && empresa.length !== 0)){
             await api.post('/usuarios', {
                 nome,
                 cargo,
                 login,
                 senha,
+                empresa
             })
                 .then(response => {
                     Alert.alert('Cadastro realizado com sucesso', '', [{text: 'OK'}])
@@ -102,13 +107,14 @@ export function SUsuarios() {
         }
     }
 
-    async function handleEditUsuario({ id, nome, senha, login, cargo }: IUsuario) {
+    async function handleEditUsuario({ id, nome, senha, login, cargo, empresa }: IUsuario) {
         if (id !== null) {
             await api.patch('/usuarios/' +id.toString(), {
                 nome,
                 cargo,
                 login,
                 senha,
+                empresa
             })
                 .then(response => {
                     Alert.alert('Ajustes realizados com sucesso', '', [{text: 'OK'}])
@@ -135,7 +141,17 @@ export function SUsuarios() {
             })
             .catch(error => {
                 console.log(error)
-            })
+            }),
+        await api.get('/empresas')
+                .then(resp => {
+                    let empresa = resp.data.map((item) => {
+                        return {key: item.id, value: item.nome}
+                    })
+                    setSelectEmpresa(empresa)
+                })
+                .catch(erro => {
+                    console.log(erro)
+                })
     }
 
     useEffect(() => {
@@ -145,7 +161,17 @@ export function SUsuarios() {
             })
             .catch(error => {
                 console.log(error)
-            })
+            }),
+            api.get('/empresas')
+                .then(resp => {
+                    let empresa = resp.data.map((item) => {
+                        return {key: item.id, value: item.nome}
+                    })
+                    setSelectEmpresa(empresa)
+                })
+                .catch(erro => {
+                    console.log(erro)
+                })
     }, [dados]);
 
     return (
@@ -184,6 +210,7 @@ export function SUsuarios() {
                                     setEditCargo(null)
                                     setEditSenha(null)
                                     setSelected("")
+                                    setSelectedEmpresa("")
                                 }}>
                                 <CColumn align='center'>
                                     <CColumn align='right' marginLeft={380} marginBottom={1}>
@@ -198,6 +225,7 @@ export function SUsuarios() {
                                             setEditCargo(null)
                                             setEditSenha(null)
                                             setSelected("")
+                                            setSelectedEmpresa("")
                                         }} />
                                     </CColumn>
                                     <HeaderModal>
@@ -234,6 +262,18 @@ export function SUsuarios() {
                                             onChangeText={setEditSenha}
                                             value={editSenha}
                                         />
+
+                                        <TextCad>*Empresa</TextCad>
+                                        <CMultSelectList
+                                            setSelected={(val) => setSelectedEmpresa(val)}
+                                            data={selectEmpresa}
+                                            placeholder='*Select option'
+                                            save="key"
+                                            onSelect={() => selectedEmpresa}
+                                            label="Empresa(s)"
+                                            searchPlaceholder="Selecione uma"
+                                        />
+
                                         <CColumn />
                                         <Coluna>
                                             <CIconButton iconName="trash" color="red" size={50} onPress={() => handleDeleteUsuario({ id: editUsuarioId})}/>
@@ -243,7 +283,8 @@ export function SUsuarios() {
                                                 nome: editUsuario,
                                                 senha: editSenha,
                                                 login: editLogin,
-                                                cargo: selected
+                                                cargo: selected,
+                                                empresa: selectedEmpresa
                                             })} />
                                         </Coluna>
                                     </HeaderModal>
@@ -314,6 +355,8 @@ export function SUsuarios() {
                                 setNovoCargo(null)
                                 setNovoLogin(null)
                                 setNovaSenha(null)
+                                setSelected('')
+                                setSelectedEmpresa("")
                             }}>
                             <CColumn align='center'>
                                 <CColumn align='right' marginLeft={380} marginBottom={1}>
@@ -323,6 +366,8 @@ export function SUsuarios() {
                                         setNovoCargo(null)
                                         setNovoLogin(null)
                                         setNovaSenha(null)
+                                        setSelected('')
+                                        setSelectedEmpresa("")
                                     }} />
                                 </CColumn>
                                 <HeaderModal>
@@ -359,6 +404,17 @@ export function SUsuarios() {
                                         value={novaSenha}
                                     />
 
+                                    <TextCad>*Empresa</TextCad>
+                                    <CMultSelectList
+                                        setSelected={(val) => setSelectedEmpresa(val)}
+                                        data={selectEmpresa}
+                                        placeholder='*Select option'
+                                        save="key"
+                                        onSelect={() => selectedEmpresa}
+                                        label="Empresa(s)"
+                                        searchPlaceholder="Selecione uma"
+                                    />
+
                                     <CColumn />
 
                                     <Coluna>
@@ -367,7 +423,8 @@ export function SUsuarios() {
                                             nome: novoUsuario,
                                             senha: novaSenha,
                                             login: novoLogin,
-                                            cargo: selected
+                                            cargo: selected,
+                                            empresa: selectedEmpresa
                                         })} />
                                     </Coluna>
                                 </HeaderModal>

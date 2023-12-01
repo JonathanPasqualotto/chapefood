@@ -1,16 +1,16 @@
 import styled from "styled-components/native";
 import {RFValue} from "react-native-responsive-fontsize";
-import {TouchableOpacityProps, Platform} from "react-native";
+import {TouchableOpacityProps, Platform, TouchableOpacity} from "react-native";
 import {Height, Width} from "../../utils/dimensions";
 
 const ios = Platform.OS === 'ios';
 
 interface Props extends TouchableOpacityProps{
-   // color?: string;
+    color?: string;
 }
 
-export const Container = styled.TouchableOpacity`
-  background-color: #638d3c;
+export const Container = styled(TouchableOpacity)<Props>`
+  background-color: ${({ color }) => color ?? '#638d3c'};
   margin-top: ${ios ? 15 : 15}px;
   width: ${ios ? Width*0.6 : Width*0.6}px;
   height: ${ios ? Height*0.08 : Height*0.08}px;

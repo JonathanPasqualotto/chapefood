@@ -3,6 +3,7 @@ import { GerenteRouter } from "./gerente.routes";
 import {AtendenteRoutes} from "./atendente.routes";
 import { useAuth } from "../hooks/auth";
 import { AuthRoutes } from "./auth.routes";
+import {CozinheiroRoutes} from "./cozinheiro.routes";
 
 export function Routes() {
     const { user } = useAuth()
@@ -15,6 +16,8 @@ export function Routes() {
                 return <GerenteRouter />;
             case 'Atendente':
                 return <AtendenteRoutes />;
+            case 'Cozinheiro':
+                return <CozinheiroRoutes />
             default:
                 return <AuthRoutes /> // Rota para quem não tem permissão
         }
