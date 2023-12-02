@@ -23,13 +23,13 @@ const ListagemOrdemServico: React.FC = () => {
 
   if (empresaLogada !== null && Array.isArray(empresaLogada)) {
     empresaLogada.map((valor) => {
-      return empresas.push(valor.id)
+      return empresas.push(valor.id.toString())
     });
   }
 
   const loadOrders = async ()=>{   
     try {
-      const response = await api.get('/pedidos/ordens?ids='+empresas)
+      const response = await api.get('/pedidos/ordens?ids='+"1,2")
       const json = response.data;
       setData(json)
     } catch(error){
